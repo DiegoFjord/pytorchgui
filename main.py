@@ -4,7 +4,7 @@ from canvas import DragDropCanvas
 from control import control, nnItem
 from tkinter import ttk  # ttk is the modern tk
 from panel_maker import panel_maker
-from items import nnStart, nnLinear, nnTest
+from items import nnStart, nnLinear, nnBatch
 
 # root
 root = tk.Tk()
@@ -28,13 +28,13 @@ def update_label(out):
         item_type = nnLinear(my_panel_maker)
         app.add_canvas_item(nnItem(item_type, selection))
 
-    if (selection == "Test"):
-        item_type = nnTest(my_panel_maker)
+    if (selection == "Batch"):
+        item_type = nnBatch(my_panel_maker)
         app.add_canvas_item(nnItem(item_type, selection))
 
 
 # object options
-options = ["Linear", "Relu", "Dropout", "Layernorm", "Mouse", "Line"]
+options = ["Linear", "Batch", "Relu", "Dropout", "Layernorm", "Mouse", "Line"]
 
 # create objects
 control_panel = tk.PanedWindow(root, orient=tk.HORIZONTAL)

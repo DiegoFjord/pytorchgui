@@ -28,18 +28,18 @@ class nnStart:
         self.start_panel = my_panel_maker.makestart()
 
     def get_user_panel(self):
-        print("this is a panel")
         self.control_panel.add(self.start_panel.panel)
 
     def hide_user_panel(self):
-        print("this is a panel")
         self.control_panel.forget(self.start_panel.panel)
 
     def readfile(self):
         # with open(self.filename, 'r', encoding="utf-8") as f:
         # text = f.read()
 
-        text = "this is some, text 1"
+        text = """this is some, text 1 that is longet than the previous text
+           a b c d e f g h i j k l m n o p q r s t u v w x y z
+        """
         # NOTE: tokens
         tokens = re.findall(r"\w+|\s|[^\w\s]", text.lower())
 
@@ -69,14 +69,21 @@ class nnStart:
         return data
 
 
-# input all data
-# batched data
-class batchData:
-    def __init__(self):
+# input starting data
+# output training data and holds desired output
+# forwards to the nn to train and find loss
+class nnBatch:
+    def __init__(self, my_panel_maker):
         self.batch_size = None
         self.block_size = None
         self.train_data = None
         self.val_date = None
+        self.split = None
+
+        self.y = None
+
+        self.control_panel = my_panel_maker.control_panel
+        self.batch_panel = my_panel_maker.makebatch()
 
     def parse_data(self, data):
         n = int(0.9*len(data))  # first 90% will be train, rest val
@@ -84,67 +91,60 @@ class batchData:
         self.val_data = data[n:]
 
     # used for self supervised learning
-    def get_batch(self, train_data, val_data, split):  # returns a (batch x block) tensor
+    # returns a (batch x block) tensor
+    def get_batch(self, train_data, val_data, split):
         # generate a small batch of data of inputs x and targets y
         data = train_data if split == 'train' else val_data
         ix = torch.randint(len(data) - self.block_size, (self.batch_size,))
         x = torch.stack([data[i:i+self.block_size] for i in ix])
         y = torch.stack([data[i+1:i+self.block_size+1] for i in ix])
         x, y = x.to(device), y.to(device)
-        return x, y
-
-    def get_user_data(self):
-        # temp values (get all of the none values)
-        self.n_emb = 1
-
-    def run(self, matrix):
-        self.get_user_data()
-        self.parse_data(matrix)
-        return None
-
-
-# using this to test the pytorch -1 tensors
-class nnTest:
-    def __init__(self, my_panel_maker):
-        self.lin1 = nn.LazyLinear(10)
-        self.control_panel = my_panel_maker.control_panel
-        self.test_panel = self.my_panel_maker.maketest()
+        self.y = y
+        return x
 
     def get_user_panel(self):
-        print("this is a panel")
-        self.control_panel.add(self.test_panel.panel)
+        self.control_panel.add(self.batch_panel.panel)
 
     def hide_user_panel(self):
-        print("this is a panel")
-        self.control_panel.forget(self.test_panel.panel)
+        self.control_panel.forget(self.batch_panel.panel)
+
+    def set_user_data(self):
+        # TODO: handle non numeric input
+        self.batch_size = self.batch_panel.batch.get()
+        self.block_size = self.batch_panel.block.get()
+        print("batch and block", self.batch_size, self.block_size)
+        self.split = self.batch_panel.split.get()
 
     def run(self, matrix):
-        # self.get_user_data()
-        # self.parse_data(matrix)
-        data = self.lin1(matrix)
-        print("the test data", data)
-        return data
+        self.set_user_data()
+        self.parse_data(matrix)
+        x = self.get_batch(self.train_data, self.val_data, self.split)
+        return x
 
 
 class nnLinear:
     def __init__(self, my_panel_maker):
-        self.lin1 = nn.LazyLinear(10)
+        self.lin1 = None
+
+        # panel data
         self.control_panel = my_panel_maker.control_panel
         self.lin_panel = my_panel_maker.makelin()
 
     def get_user_panel(self):
-        print("get panel")
         self.control_panel.add(self.lin_panel.panel)
 
     def hide_user_panel(self):
-        print("unset panel")
         self.control_panel.forget(self.lin_panel.panel)
 
-    # this input is a tensor
+    def set_user_data(self):
+        # TODO: handle non numeric input
+        linval = self.lin_panel.spinvar
+        self.lin1 = nn.LazyLinear(linval.get())
+
+        # this input is a tensor
 
     def run(self, matrix):
-        # self.get_user_data()
-        # self.parse_data(matrix)
+        self.set_user_data()
         data = self.lin1(matrix)
         print("the lin data", data)
         return data

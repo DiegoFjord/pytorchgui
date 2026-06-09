@@ -59,11 +59,11 @@ class DragDropCanvas:
         """Detects if an item was pressed."""
         # Find the item closest to the click coordinates
         clicked_ids = self.canvas.find_withtag("current")
-        clicked_id = clicked_ids[0]
 
         tempdict = self.controller.itemset
 
         if clicked_ids:
+            clicked_id = clicked_ids[0]
             self.start_x = event.x
             self.start_y = event.y
 
@@ -79,7 +79,7 @@ class DragDropCanvas:
                     ]
 
                     item_id = self.canvas.create_line(
-                        initial_points, smooth=True, fill="blue", width=4.9
+                        initial_points, smooth=True, fill="blue", width=5.0
                     )
 
                     self.selected_id = item_id
@@ -127,7 +127,9 @@ class DragDropCanvas:
             elif (self.state == "Line"):
                 self.canvas.coords(
                     self.selected_id,
-                    *self.get_line_coors(self.start_x, self.start_y, event.x, event.y)
+                    *self.get_line_coors(
+                        self.start_x, self.start_y, event.x, event.y
+                    )
                 )
 
     def line_target_conditions(self, tempdict, target_id):
