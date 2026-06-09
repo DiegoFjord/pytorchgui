@@ -15,7 +15,8 @@ class DragDropCanvas:
 
         # Create start
         start_id = self.canvas.create_rectangle(
-            50, 50, 150, 150, fill="yellow")
+            50, 50, 150, 150, fill="yellow"
+        )
         self.controller.itemset[start_id] = controller.treeStart
         self.controller.itemset[start_id].curr.get_user_panel()
 

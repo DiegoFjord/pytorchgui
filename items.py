@@ -3,23 +3,24 @@ import torch.nn as nn
 import torch
 import torch_directml
 # my imports
-device = torch_directml.device()
 
 # NOTE: maybe make a gobals class
 
 # global vars
-vocab_size = 0
 
 
-# add embeddings to data
+class nnGlobals:
+    vocab_size = None
+    block_size = None
+    batch_size = None
+    emb_dims = None
+    device = torch_directml.device()
+
+
 class nnStart:
     def __init__(self, filename, my_panel_maker):
         # file
         self.name = filename
-
-        # data
-        self.block_size = 8  # context length
-        self.batch_size = 8  # number of blocks
 
         # user input data
 
@@ -33,11 +34,15 @@ class nnStart:
     def hide_user_panel(self):
         self.control_panel.forget(self.start_panel.panel)
 
+    def set_user_data(self):
+        pass
+
     def readfile(self):
         # with open(self.filename, 'r', encoding="utf-8") as f:
         # text = f.read()
 
         text = """this is some, text 1 that is longet than the previous text
+           a b c d e f g h i j k l m n o p q r s t u v w x y z
            a b c d e f g h i j k l m n o p q r s t u v w x y z
         """
         # NOTE: tokens
@@ -46,8 +51,8 @@ class nnStart:
         tokenset = set(tokens)
         tokensetlist = list(tokenset)
 
-        global vocab_size
-        vocab_size = len(tokensetlist)
+        nnGlobals.vocab_size = len(tokensetlist)
+        print("vocab size", nnGlobals.vocab_size)
 
         # TODO: tokenize strings not chars
         stoi = {ch: i for i, ch in enumerate(tokensetlist)}
@@ -56,16 +61,20 @@ class nnStart:
         def encode(s): return [stoi[c] for c in s]
         def decode(b): return ''.join([itos[i] for i in b])
 
-        data = torch.tensor(encode(tokens), dtype=torch.float)
-        print(data)
+        data = torch.tensor(encode(tokens), dtype=torch.long)
         return data
 
     # this input is a tensor
     def run(self, matrix):
+        print("running start")
+        setup = True
+        if (setup):
+            self.set_user_data()
+            setup = False
+
         data = self.readfile()
         # fetch control_panel values on run
         # run other important stuff
-        print("the start data", data)
         return data
 
 
@@ -74,32 +83,29 @@ class nnStart:
 # forwards to the nn to train and find loss
 class nnBatch:
     def __init__(self, my_panel_maker):
-        self.batch_size = None
-        self.block_size = None
         self.train_data = None
         self.val_date = None
         self.split = None
-
-        self.y = None
 
         self.control_panel = my_panel_maker.control_panel
         self.batch_panel = my_panel_maker.makebatch()
 
     def parse_data(self, data):
-        n = int(0.9*len(data))  # first 90% will be train, rest val
+        n = int(1.00*len(data))  # first 90% will be train, rest val
         self.train_data = data[:n]
         self.val_data = data[n:]
 
     # used for self supervised learning
     # returns a (batch x block) tensor
-    def get_batch(self, train_data, val_data, split):
+    def get_batch(self, train_data, val_data, split, batch_size, block_size):
         # generate a small batch of data of inputs x and targets y
-        data = train_data if split == 'train' else val_data
-        ix = torch.randint(len(data) - self.block_size, (self.batch_size,))
-        x = torch.stack([data[i:i+self.block_size] for i in ix])
-        y = torch.stack([data[i+1:i+self.block_size+1] for i in ix])
-        x, y = x.to(device), y.to(device)
-        self.y = y
+        data = train_data  # if split == 'train' else val_data
+        print("printing data", data)
+        ix = torch.randint(len(data) - block_size, (batch_size,))
+        x = torch.stack([data[i:i + block_size] for i in ix])
+        y = torch.stack([data[i+1:i + block_size + 1] for i in ix])
+        x, y = x.to(nnGlobals.device), y.to(nnGlobals.device)
+        # nnGlobals.y = y
         return x
 
     def get_user_panel(self):
@@ -110,15 +116,24 @@ class nnBatch:
 
     def set_user_data(self):
         # TODO: handle non numeric input
-        self.batch_size = self.batch_panel.batch.get()
-        self.block_size = self.batch_panel.block.get()
-        print("batch and block", self.batch_size, self.block_size)
-        self.split = self.batch_panel.split.get()
+        nnGlobals.batch_size = self.batch_panel.batch.get()
+        nnGlobals.block_size = self.batch_panel.block.get()
+        self.split = "train"
 
     def run(self, matrix):
-        self.set_user_data()
+        print("running batch")
+        setup = True
+        if (setup):
+            self.set_user_data()
+            setup = False
+
         self.parse_data(matrix)
-        x = self.get_batch(self.train_data, self.val_data, self.split)
+
+        x = self.get_batch(
+            matrix, matrix, self.split,
+            nnGlobals.batch_size, nnGlobals.block_size
+        )
+
         return x
 
 
@@ -144,10 +159,55 @@ class nnLinear:
         # this input is a tensor
 
     def run(self, matrix):
-        self.set_user_data()
+        print("running lin")
         data = self.lin1(matrix)
-        print("the lin data", data)
         return data
+
+
+class nnEmbedings(nn.Module):
+    def __init__(self, my_panel_maker):
+        super().__init__()
+
+        self.token_embedding_table = None
+        self.position_embedding_table = None
+
+        # panel data
+        self.control_panel = my_panel_maker.control_panel
+        self.embs_panel = my_panel_maker.makeembs()
+
+    def get_user_panel(self):
+        self.control_panel.add(self.embs_panel.panel)
+
+    def hide_user_panel(self):
+        self.control_panel.forget(self.embs_panel.panel)
+
+    def set_user_data(self):
+        embval = self.embs_panel.embs.get()
+        nnGlobals.emb_dims = embval
+
+        self.token_embedding_table = nn.Embedding(
+            nnGlobals.vocab_size, embval).to(nnGlobals.device)
+        self.position_embedding_table = nn.Embedding(
+            nnGlobals.block_size, embval).to(nnGlobals.device)
+
+    def run(self, matrix, targets=None):
+        print("running embs")
+        setup = True
+        if (setup):
+            self.set_user_data()
+            setup = False
+
+        B, T = matrix.shape
+
+        tok_emb = self.token_embedding_table(matrix)
+        pos_emb = self.position_embedding_table(
+            torch.arange(T, device=nnGlobals.device)
+        )
+
+        # Combine representations
+        x = tok_emb + pos_emb
+
+        return x
 
 
 class gate:

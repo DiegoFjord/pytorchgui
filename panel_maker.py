@@ -16,7 +16,7 @@ class panel_maker:
         panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
         v = tk.IntVar()
 
-        label = tk.Label(panel, text="this is the start menu")
+        label = tk.Label(panel, text="start menu")
         radioa = tk.Radiobutton(panel, text="A", variable=v, value=1)
         radiob = tk.Radiobutton(panel, text="B", variable=v, value=2)
         radioc = tk.Radiobutton(panel, text="C", variable=v, value=3)
@@ -38,7 +38,7 @@ class panel_maker:
         panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
         a = tk.IntVar(value=8)
 
-        label = tk.Label(panel, text="this is the lin menu")
+        label = tk.Label(panel, text="lin menu")
         spinbox = tk.Spinbox(panel, from_=0, to=10, textvariable=a)
         entry = tk.Entry(panel)
 
@@ -56,7 +56,7 @@ class panel_maker:
         block = tk.IntVar(value=8)
         v = tk.IntVar()
 
-        label = tk.Label(panel, text="this is the batch menu")
+        label = tk.Label(panel, text="batch menu")
         spinboxa = tk.Spinbox(panel, from_=0, to=10, textvariable=batch)
         spinboxb = tk.Spinbox(panel, from_=0, to=10, textvariable=block)
 
@@ -78,6 +78,34 @@ class panel_maker:
         bp.block = block
         bp.split = v
         return bp
+
+    def makeembs(self):
+        panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
+        embs = tk.IntVar(value=8)
+
+        label = tk.Label(panel, text="emb menu")
+        spinboxa = tk.Spinbox(panel, from_=0, to=10, textvariable=embs)
+
+        # train and validate
+
+        entry = tk.Entry(panel)
+
+        panel.add(label)
+        panel.add(spinboxa)
+        panel.add(entry)
+
+        bp = embpanel(panel, label, spinboxa)
+        bp.embs = embs
+        return bp
+
+
+class embpanel:
+    def __init__(self, panel, label, spinboxa):
+        self.panel = panel
+        self.label = label
+        self.spinbox = spinboxa
+
+        self.embs = None
 
 
 class batchpanel:
