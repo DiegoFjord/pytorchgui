@@ -17,20 +17,14 @@ class panel_maker:
         v = tk.IntVar()
 
         label = tk.Label(panel, text="start menu")
-        radioa = tk.Radiobutton(panel, text="A", variable=v, value=1)
-        radiob = tk.Radiobutton(panel, text="B", variable=v, value=2)
-        radioc = tk.Radiobutton(panel, text="C", variable=v, value=3)
         spinbox = tk.Spinbox(panel, from_=0, to=10)
         entry = tk.Entry(panel)
 
         panel.add(label)
-        panel.add(radioa)
-        panel.add(radiob)
-        panel.add(radioc)
         panel.add(spinbox)
         panel.add(entry)
 
-        sp = startpanel(panel, label, radioa, radiob, radioc, spinbox, entry)
+        sp = startpanel(panel, label,  spinbox, entry)
         sp.radiovar = v
         return sp
 
@@ -52,16 +46,16 @@ class panel_maker:
 
     def makebatch(self):
         panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
-        batch = tk.IntVar(value=8)
+        batch = tk.IntVar(value=4)
         block = tk.IntVar(value=8)
-        v = tk.IntVar()
+        v = tk.IntVar(value=1)
 
         label = tk.Label(panel, text="batch menu")
         spinboxa = tk.Spinbox(panel, from_=0, to=10, textvariable=batch)
         spinboxb = tk.Spinbox(panel, from_=0, to=10, textvariable=block)
 
         # train and validate
-        train = tk.Radiobutton(panel, text="trian", variable=v, value=1)
+        train = tk.Radiobutton(panel, text="train", variable=v, value=1)
         validate = tk.Radiobutton(panel, text="validate", variable=v, value=2)
 
         entry = tk.Entry(panel)
@@ -132,11 +126,8 @@ class linpanel:
 
 
 class startpanel:
-    def __init__(self, panel, label, radioa, radiob, radioc, spinbox, entry):
+    def __init__(self, panel, label, spinbox, entry):
         self.panel = panel
-        self.radioa = radioa
-        self.radiob = radiob
-        self.radioc = radioc
         self.label = label
         self.spinbox = spinbox
         self.entry = entry

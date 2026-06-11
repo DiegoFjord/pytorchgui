@@ -19,6 +19,10 @@ root.geometry("750x750")
 # function handlers
 
 
+def setmouse():
+    app.state = "Mouse"
+
+
 def update_label(out):
     print(out)
     selection = combo.get()
@@ -29,10 +33,6 @@ def update_label(out):
     else:
         app.state = "Mouse"
 
-    if (selection == "Linear"):
-        item_type = nnLinear(my_panel_maker)
-        app.add_canvas_item(nnItem(item_type, selection))
-
     if (selection == "Batch"):
         item_type = nnBatch(my_panel_maker)
         app.add_canvas_item(nnItem(item_type, selection))
@@ -42,14 +42,17 @@ def update_label(out):
         item_type.to(nnGlobals.device)
         app.add_canvas_item(nnItem(item_type, selection))
 
+    if (selection == "Linear"):
+        item_type = nnLinear(my_panel_maker)
+        item_type.to(nnGlobals.device)
+        app.add_canvas_item(nnItem(item_type, selection))
+
 
 # object options
-
 options = ["Linear", "Batch", "Embeddings", "Mouse", "Line"]
 
 # create objects
-
-control_panel = tk.PanedWindow(root, orient=tk.HORIZONTAL)
+control_panel = ttk.PanedWindow(root, orient=tk.HORIZONTAL, height=50)
 my_panel_maker = panel_maker(control_panel)
 
 controller = control(root)
@@ -62,20 +65,19 @@ label = tk.Label(root, text="App")
 label2 = tk.Label(root, text="Please make a selection", font=("Arial", 12))
 combo = ttk.Combobox(root, values=options, state="readonly")
 start_button = ttk.Button(root, text="Start Progress", command=controller.run)
+mouse_button = ttk.Button(root, text="set mouse", command=setmouse)
 
 # handle objects
-
-
 combo.bind("<<ComboboxSelected>>", update_label)
 control_panel.add(label)
 
 # render objects
-
 label2.pack(pady=20)
 combo.pack(pady=5)
 start_button.pack(pady=10)
-control_panel.pack(fill=tk.BOTH, expand=True)
-app.canvas.pack(fill="both", expand=False)
+mouse_button.pack(pady=10)
+control_panel.pack(fill=tk.Y, expand=False)
+app.canvas.pack(fill=tk.BOTH, expand=False)
 
 # set objects
 

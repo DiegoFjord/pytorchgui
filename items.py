@@ -20,9 +20,9 @@ class nnGlobals:
 class nnStart:
     def __init__(self, filename, my_panel_maker):
         # file
-        self.name = filename
+        self.filename = None
 
-        # user input data
+        self.setup = True
 
         # rendering
         self.control_panel = my_panel_maker.control_panel
@@ -35,7 +35,7 @@ class nnStart:
         self.control_panel.forget(self.start_panel.panel)
 
     def set_user_data(self):
-        pass
+        self.filename = self.start_panel.entry.get()
 
     def readfile(self):
         # with open(self.filename, 'r', encoding="utf-8") as f:
@@ -67,10 +67,9 @@ class nnStart:
     # this input is a tensor
     def run(self, matrix):
         print("running start")
-        setup = True
-        if (setup):
+        if (self.setup):
             self.set_user_data()
-            setup = False
+            self.setup = False
 
         data = self.readfile()
         # fetch control_panel values on run
@@ -99,8 +98,7 @@ class nnBatch:
     # returns a (batch x block) tensor
     def get_batch(self, train_data, val_data, split, batch_size, block_size):
         # generate a small batch of data of inputs x and targets y
-        data = train_data  # if split == 'train' else val_data
-        print("printing data", data)
+        data = train_data if split == 'train' else val_data
         ix = torch.randint(len(data) - block_size, (batch_size,))
         x = torch.stack([data[i:i + block_size] for i in ix])
         y = torch.stack([data[i+1:i + block_size + 1] for i in ix])
@@ -118,28 +116,35 @@ class nnBatch:
         # TODO: handle non numeric input
         nnGlobals.batch_size = self.batch_panel.batch.get()
         nnGlobals.block_size = self.batch_panel.block.get()
-        self.split = "train"
+        split = self.batch_panel.split.get()
+        if (split == 1):
+            self.split = "train"
+        else:
+            self.split = "val"
 
     def run(self, matrix):
         print("running batch")
         setup = True
         if (setup):
             self.set_user_data()
+            self.parse_data(matrix)
             setup = False
-
-        self.parse_data(matrix)
 
         x = self.get_batch(
             matrix, matrix, self.split,
             nnGlobals.batch_size, nnGlobals.block_size
         )
 
+        print(x.shape)
         return x
 
 
-class nnLinear:
+class nnLinear(nn.Module):
     def __init__(self, my_panel_maker):
+        super().__init__()
         self.lin1 = None
+        self.setup = True
+        self.dim = None
 
         # panel data
         self.control_panel = my_panel_maker.control_panel
@@ -153,14 +158,22 @@ class nnLinear:
 
     def set_user_data(self):
         # TODO: handle non numeric input
-        linval = self.lin_panel.spinvar
-        self.lin1 = nn.LazyLinear(linval.get())
+        linval = self.lin_panel.spinvar.get()
+        self.lin1 = nn.Linear(
+            self.dim, linval, bias=False
+        ).to(nnGlobals.device)
 
         # this input is a tensor
 
     def run(self, matrix):
         print("running lin")
+        if (self.setup):
+            self.dim = matrix.size(-1)
+            self.set_user_data()
+            self.setup = False
+
         data = self.lin1(matrix)
+        print("printing linear", data)
         return data
 
 
@@ -206,6 +219,7 @@ class nnEmbedings(nn.Module):
 
         # Combine representations
         x = tok_emb + pos_emb
+        print(x.shape)
 
         return x
 

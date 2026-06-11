@@ -1,6 +1,4 @@
 class nnItem:
-    nnVars = None
-
     def __init__(self, curr, nnType):
         self.nntype = nnType
         self.curr = curr
@@ -12,6 +10,7 @@ class nnItem:
 
     def call(self, prev):
         # FIX: account for looping (might not be an issue?)
+        # if result is None break
         result = self.curr.run(prev)
         for item in self.nexts:
             item.call(result)
@@ -26,3 +25,6 @@ class control:
         # NOTE: file stuff
     def run(self):
         self.treeStart.call("passed")
+
+        for key, value in self.itemset.items():
+            value.curr.setup = True

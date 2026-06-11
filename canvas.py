@@ -35,8 +35,16 @@ class DragDropCanvas:
 
     def add_canvas_item(self, bind):
         # Create a draggable rectangle
+        color = None
+        if (bind.nntype == "Batch"):
+            color = "darkblue"
+        if (bind.nntype == "Embeddings"):
+            color = "green"
+        if (bind.nntype == "Linear"):
+            color = "light blue"
+
         item_id = self.canvas.create_rectangle(
-            50, 50, 150, 150, fill="royalblue"
+            50, 50, 150, 150, fill=color
         )
         self.controller.itemset[item_id] = bind
         print(f"made {item_id}")
@@ -80,7 +88,7 @@ class DragDropCanvas:
                     ]
 
                     item_id = self.canvas.create_line(
-                        initial_points, smooth=True, fill="blue", width=5.0
+                        initial_points, smooth=True, fill="blue", width=3.0
                     )
 
                     self.selected_id = item_id
