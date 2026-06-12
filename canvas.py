@@ -38,10 +38,14 @@ class DragDropCanvas:
         color = None
         if (bind.nntype == "Batch"):
             color = "darkblue"
-        if (bind.nntype == "Embeddings"):
+        elif (bind.nntype == "Embeddings"):
             color = "green"
-        if (bind.nntype == "Linear"):
+        elif (bind.nntype == "Linear"):
             color = "light blue"
+        elif (bind.nntype == "Linear"):
+            color = "light red"
+        else:
+            color = "red"
 
         item_id = self.canvas.create_rectangle(
             50, 50, 150, 150, fill=color
@@ -142,16 +146,22 @@ class DragDropCanvas:
                 )
 
     def line_target_conditions(self, tempdict, target_id):
+
         if (target_id < 0):
             return False
 
         if (self.base_id == target_id):
             return False
 
-        if (len(tempdict[target_id].prevs) > 0):
+        nntype = tempdict[target_id].nntype
+
+        if (nntype == "Start"):
             return False
 
-        if (tempdict[target_id].nntype == "Start"):
+        if (nntype == "Multiply"):
+            if (len(tempdict[target_id].prevs) > 1):
+                return False
+        elif (len(tempdict[target_id].prevs) > 0):
             return False
 
         return True

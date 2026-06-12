@@ -14,18 +14,22 @@ class panel_maker:
     # training data size
     def makestart(self):
         panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
-        v = tk.IntVar()
+        v = tk.IntVar(value=1)
 
         label = tk.Label(panel, text="start menu")
-        spinbox = tk.Spinbox(panel, from_=0, to=10)
+        test = tk.Radiobutton(panel, text="test", variable=v, value=1)
+        run = tk.Radiobutton(panel, text="run", variable=v, value=2)
+        custom = tk.Radiobutton(panel, text="custom", variable=v, value=3)
         entry = tk.Entry(panel)
 
         panel.add(label)
-        panel.add(spinbox)
+        panel.add(test)
+        panel.add(run)
+        panel.add(custom)
         panel.add(entry)
 
-        sp = startpanel(panel, label,  spinbox, entry)
-        sp.radiovar = v
+        sp = startpanel(panel, label, entry)
+        sp.execute = v
         return sp
 
     def makelin(self):
@@ -33,7 +37,7 @@ class panel_maker:
         a = tk.IntVar(value=8)
 
         label = tk.Label(panel, text="lin menu")
-        spinbox = tk.Spinbox(panel, from_=0, to=10, textvariable=a)
+        spinbox = tk.Spinbox(panel, from_=0, to=1024, textvariable=a)
         entry = tk.Entry(panel)
 
         panel.add(label)
@@ -51,8 +55,8 @@ class panel_maker:
         v = tk.IntVar(value=1)
 
         label = tk.Label(panel, text="batch menu")
-        spinboxa = tk.Spinbox(panel, from_=0, to=10, textvariable=batch)
-        spinboxb = tk.Spinbox(panel, from_=0, to=10, textvariable=block)
+        spinboxa = tk.Spinbox(panel, from_=0, to=1024, textvariable=batch)
+        spinboxb = tk.Spinbox(panel, from_=0, to=1024, textvariable=block)
 
         # train and validate
         train = tk.Radiobutton(panel, text="train", variable=v, value=1)
@@ -78,7 +82,7 @@ class panel_maker:
         embs = tk.IntVar(value=8)
 
         label = tk.Label(panel, text="emb menu")
-        spinboxa = tk.Spinbox(panel, from_=0, to=10, textvariable=embs)
+        spinboxa = tk.Spinbox(panel, from_=0, to=1024, textvariable=embs)
 
         # train and validate
 
@@ -91,6 +95,41 @@ class panel_maker:
         bp = embpanel(panel, label, spinboxa)
         bp.embs = embs
         return bp
+
+    def makemult(self):
+        panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
+
+        a = tk.IntVar(value=1)
+        b = tk.IntVar(value=0)
+
+        label = tk.Label(panel, text="multiplication menu")
+        checkboxa = tk.Checkbutton(
+            panel, text="transposea", variable=a, onvalue=1, offvalue=0
+        )
+        checkboxb = tk.Checkbutton(
+            panel, text="transposeb", variable=b, onvalue=1, offvalue=0
+        )
+
+        panel.add(label)
+        panel.add(checkboxa)
+        panel.add(checkboxb)
+
+        mp = multpanel(panel, label, checkboxa, checkboxb)
+        mp.transposea = a
+        mp.transposeb = b
+
+        return mp
+
+
+class multpanel:
+    def __init__(self, panel, label, checkboxa, checkboxb):
+        self.panel = panel
+        self.label = label
+        self.checkbox = checkboxa
+        self.checkbox = checkboxb
+
+        self.transposea = None
+        self.transposeb = None
 
 
 class embpanel:
@@ -126,10 +165,9 @@ class linpanel:
 
 
 class startpanel:
-    def __init__(self, panel, label, spinbox, entry):
+    def __init__(self, panel, label, entry):
         self.panel = panel
         self.label = label
-        self.spinbox = spinbox
         self.entry = entry
 
-        self.radiovar = None
+        self.execute = None

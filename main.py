@@ -4,10 +4,7 @@ from canvas import DragDropCanvas
 from control import control, nnItem
 from tkinter import ttk  # ttk is the modern tk
 from panel_maker import panel_maker
-from items import nnGlobals, nnStart, nnLinear, nnBatch, nnEmbedings
-
-import torch
-import torch_directml
+from items import nnGlobals, nnStart, nnLinear, nnBatch, nnEmbedings, nnMultiply
 # my imports
 
 
@@ -37,6 +34,10 @@ def update_label(out):
         item_type = nnBatch(my_panel_maker)
         app.add_canvas_item(nnItem(item_type, selection))
 
+    if (selection == "Multiply"):
+        item_type = nnMultiply(my_panel_maker)
+        app.add_canvas_item(nnItem(item_type, selection))
+
     if (selection == "Embeddings"):
         item_type = nnEmbedings(my_panel_maker)
         item_type.to(nnGlobals.device)
@@ -49,7 +50,7 @@ def update_label(out):
 
 
 # object options
-options = ["Linear", "Batch", "Embeddings", "Mouse", "Line"]
+options = ["Linear", "Batch", "Embeddings", "Multiply", "Mouse", "Line"]
 
 # create objects
 control_panel = ttk.PanedWindow(root, orient=tk.HORIZONTAL, height=50)

@@ -21,7 +21,7 @@ class nnStart:
     def __init__(self, filename, my_panel_maker):
         # file
         self.filename = None
-
+        self.execution = None
         self.setup = True
 
         # rendering
@@ -36,12 +36,13 @@ class nnStart:
 
     def set_user_data(self):
         self.filename = self.start_panel.entry.get()
+        self.execution = self.start_panel.execute.get()
 
     def readfile(self):
         # with open(self.filename, 'r', encoding="utf-8") as f:
         # text = f.read()
 
-        text = """this is some, text 1 that is longet than the previous text
+        text = """this is some, text 1 that is longer than the previous text
            a b c d e f g h i j k l m n o p q r s t u v w x y z
            a b c d e f g h i j k l m n o p q r s t u v w x y z
         """
@@ -64,16 +65,23 @@ class nnStart:
         data = torch.tensor(encode(tokens), dtype=torch.long)
         return data
 
+    def runExecute(self):
+        if (self.execution == 1):
+            return torch.rand(16, 8, 4)
+        if (self.execution == 2):
+            return self.readfile()
     # this input is a tensor
+
     def run(self, matrix):
         print("running start")
         if (self.setup):
             self.set_user_data()
             self.setup = False
 
-        data = self.readfile()
+        data = self.runExecute()
         # fetch control_panel values on run
         # run other important stuff
+        print(data.shape)
         return data
 
 
@@ -85,6 +93,7 @@ class nnBatch:
         self.train_data = None
         self.val_date = None
         self.split = None
+        self.setup = True
 
         self.control_panel = my_panel_maker.control_panel
         self.batch_panel = my_panel_maker.makebatch()
@@ -124,11 +133,10 @@ class nnBatch:
 
     def run(self, matrix):
         print("running batch")
-        setup = True
-        if (setup):
+        if (self.setup):
             self.set_user_data()
             self.parse_data(matrix)
-            setup = False
+            self.setup = False
 
         x = self.get_batch(
             matrix, matrix, self.split,
@@ -143,8 +151,8 @@ class nnLinear(nn.Module):
     def __init__(self, my_panel_maker):
         super().__init__()
         self.lin1 = None
-        self.setup = True
         self.dim = None
+        self.setup = True
 
         # panel data
         self.control_panel = my_panel_maker.control_panel
@@ -173,7 +181,7 @@ class nnLinear(nn.Module):
             self.setup = False
 
         data = self.lin1(matrix)
-        print("printing linear", data)
+        print("printing linear", data.shape)
         return data
 
 
@@ -183,6 +191,7 @@ class nnEmbedings(nn.Module):
 
         self.token_embedding_table = None
         self.position_embedding_table = None
+        self.setup = True
 
         # panel data
         self.control_panel = my_panel_maker.control_panel
@@ -203,12 +212,11 @@ class nnEmbedings(nn.Module):
         self.position_embedding_table = nn.Embedding(
             nnGlobals.block_size, embval).to(nnGlobals.device)
 
-    def run(self, matrix, targets=None):
+    def run(self, matrix):
         print("running embs")
-        setup = True
-        if (setup):
+        if (self.setup):
             self.set_user_data()
-            setup = False
+            self.setup = False
 
         B, T = matrix.shape
 
@@ -222,6 +230,57 @@ class nnEmbedings(nn.Module):
         print(x.shape)
 
         return x
+
+
+class nnMultiply:
+    def __init__(self, my_panel_maker):
+        super().__init__()
+        self.transposea = None
+        self.transposeb = None
+        self.a = None
+        self.b = None
+        self.setup = True
+
+        # panel data
+        self.control_panel = my_panel_maker.control_panel
+        self.mult_panel = my_panel_maker.makemult()
+
+    def get_user_panel(self):
+        self.control_panel.add(self.mult_panel.panel)
+
+    def hide_user_panel(self):
+        self.control_panel.forget(self.mult_panel.panel)
+
+    def set_user_data(self):
+        self.transposea = self.mult_panel.transposea.get()
+        self.transposeb = self.mult_panel.transposeb.get()
+
+    def run(self, matrix):
+        print("running embs")
+        if (self.setup):
+            self.set_user_data()
+            self.setup = False
+
+        if (self.a is not None):
+            # run multiplication
+            if (self.transposea == 1):
+                self.a = self.a.transpose(-2, -1)
+            if (self.transposeb == 1):
+                matrix = matrix.transpose(-2, -1)
+
+            print(self.a.shape)
+            print(matrix.shape)
+            if (self.a.size(-1) != matrix.size(-2)):
+                print("items not compatible")
+                matrix = None
+            else:
+                matrix = matrix @ self.a
+
+            self.a = None
+            return matrix
+        else:
+            self.a = matrix
+            return None
 
 
 class gate:
