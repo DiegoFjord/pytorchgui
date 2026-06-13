@@ -42,8 +42,8 @@ class DragDropCanvas:
             color = "green"
         elif (bind.nntype == "Linear"):
             color = "light blue"
-        elif (bind.nntype == "Linear"):
-            color = "light red"
+        elif (bind.nntype == "Script"):
+            color = "light pink"
         else:
             color = "red"
 

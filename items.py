@@ -283,6 +283,60 @@ class nnMultiply:
             return None
 
 
+class nnScript:
+    def __init__(self, my_panel_maker):
+        super().__init__()
+        self.exec_file = None
+        self.exec_string = None
+
+        self.setup = True
+
+        # panel data
+        self.control_panel = my_panel_maker.control_panel
+        self.script_panel = my_panel_maker.makescript(self.filesave)
+
+    def filesave(self):
+        pass
+
+    def fileget(self):
+        # set the entry to the file
+        pass
+
+    def get_user_panel(self):
+        self.control_panel.add(self.script_panel.panel)
+
+    def hide_user_panel(self):
+        self.control_panel.forget(self.script_panel.panel)
+
+    def set_user_data(self):
+        self.exec_file = self.script_panel.entrya.get()
+        self.exec_string_obj = self.script_panel.entryb
+
+    def run(self, matrix):
+        print("running script")
+        if (self.setup):
+            self.fileget()
+            self.set_user_data()
+            self.setup = False
+
+        # locals are removed anyways
+        # local_scope = {}
+        exec_scope = {
+            'torch': torch,
+            'device': nnGlobals.device,
+            'x': matrix,
+        }
+
+        # 2. Pass the dictionary into the globals parameter of exec()
+        # exec("c = x.sum(1, keepdim=False)", exec_scope)
+        exec(self.exec_string_obj.get(), exec_scope)
+
+        # 3. Extract your new tensor 'c' from the environment dictionary
+        c = exec_scope['c']
+        print(c.shape)
+        return c
+
+
 class gate:
     def __init__(self, name):
         self.name = name

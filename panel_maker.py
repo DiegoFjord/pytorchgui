@@ -1,5 +1,5 @@
 import tkinter as tk
-
+from tkinter import ttk  # ttk is the modern tk
 # inputs is defined as an array
 
 
@@ -34,10 +34,10 @@ class panel_maker:
 
     def makelin(self):
         panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
-        a = tk.IntVar(value=8)
+        dims = tk.IntVar(value=8)
 
         label = tk.Label(panel, text="lin menu")
-        spinbox = tk.Spinbox(panel, from_=0, to=1024, textvariable=a)
+        spinbox = tk.Spinbox(panel, from_=0, to=1024, textvariable=dims)
         entry = tk.Entry(panel)
 
         panel.add(label)
@@ -45,7 +45,7 @@ class panel_maker:
         panel.add(entry)
 
         lp = linpanel(panel, label, spinbox, entry)
-        lp.spinvar = a
+        lp.dims = dims
         return lp
 
     def makebatch(self):
@@ -83,9 +83,6 @@ class panel_maker:
 
         label = tk.Label(panel, text="emb menu")
         spinboxa = tk.Spinbox(panel, from_=0, to=1024, textvariable=embs)
-
-        # train and validate
-
         entry = tk.Entry(panel)
 
         panel.add(label)
@@ -120,13 +117,45 @@ class panel_maker:
 
         return mp
 
+    def makescript(self, filesave):
+        panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
+        prog = tk.StringVar(value="# set to default")
+
+        label = tk.Label(panel, text="script menu")
+        button = ttk.Button(
+            panel, text="filesave", command=filesave
+        )
+        entrya = tk.Entry(panel)
+        entryb = tk.Entry(panel, textvariable=prog)
+
+        panel.add(label)
+        panel.add(button)
+        panel.add(entrya)
+        panel.add(entryb)
+
+        sp = scriptpanel(panel, label, button, entrya, entryb)
+        sp.prog = prog
+
+        return sp
+
+
+class scriptpanel:
+    def __init__(self, panel, label, button, entrya, entryb):
+        self.panel = panel
+        self.label = label
+        self.button = button
+        self.entrya = entrya
+        self.entryb = entryb
+
+        self.prog = None
+
 
 class multpanel:
     def __init__(self, panel, label, checkboxa, checkboxb):
         self.panel = panel
         self.label = label
-        self.checkbox = checkboxa
-        self.checkbox = checkboxb
+        self.checkboxa = checkboxa
+        self.checkboxb = checkboxb
 
         self.transposea = None
         self.transposeb = None
@@ -145,8 +174,8 @@ class batchpanel:
     def __init__(self, panel, label, spinboxa, spinboxb, entry):
         self.panel = panel
         self.label = label
-        self.spinbox = spinboxa
-        self.spinbox = spinboxb
+        self.spinboxa = spinboxa
+        self.spinboxb = spinboxb
         self.entry = entry
 
         self.batch = None
@@ -161,7 +190,7 @@ class linpanel:
         self.spinbox = spinbox
         self.entry = entry
 
-        self.spinvar = None
+        self.dims = None
 
 
 class startpanel:
