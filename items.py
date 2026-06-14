@@ -17,26 +17,35 @@ class nnGlobals:
     device = torch_directml.device()
 
 
-class nnStart:
+class getsetpanel:
+    def __init__(self, control_panel):
+        # rendering
+        self.control_panel = control_panel
+        self.nn_panel = None
+
+    def get_user_panel(self):
+        self.control_panel.add(self.nn_panel.panel)
+
+    def hide_user_panel(self):
+        self.control_panel.forget(self.nn_panel.panel)
+
+
+class nnStart(getsetpanel):
     def __init__(self, filename, my_panel_maker):
+        control_panel = my_panel_maker.control_panel
+        getsetpanel.__init__(self, control_panel)
+
         # file
         self.filename = None
         self.execution = None
         self.setup = True
 
         # rendering
-        self.control_panel = my_panel_maker.control_panel
-        self.start_panel = my_panel_maker.makestart()
-
-    def get_user_panel(self):
-        self.control_panel.add(self.start_panel.panel)
-
-    def hide_user_panel(self):
-        self.control_panel.forget(self.start_panel.panel)
+        self.nn_panel = my_panel_maker.makestart()
 
     def set_user_data(self):
-        self.filename = self.start_panel.entry.get()
-        self.execution = self.start_panel.execute.get()
+        self.filename = self.nn_panel.entry.get()
+        self.execution = self.nn_panel.execute.get()
 
     def readfile(self):
         # with open(self.filename, 'r', encoding="utf-8") as f:
@@ -67,7 +76,7 @@ class nnStart:
 
     def runExecute(self):
         if (self.execution == 1):
-            return torch.rand(16, 8, 4)
+            return torch.rand(16, 8, 4).to(nnGlobals.device)
         if (self.execution == 2):
             return self.readfile()
     # this input is a tensor
@@ -79,7 +88,7 @@ class nnStart:
             self.setup = False
 
         data = self.runExecute()
-        # fetch control_panel values on run
+        # fetch control _panel values on run
         # run other important stuff
         print(data.shape)
         return data
@@ -88,15 +97,18 @@ class nnStart:
 # input starting data
 # output training data and holds desired output
 # forwards to the nn to train and find loss
-class nnBatch:
+class nnBatch(getsetpanel):
     def __init__(self, my_panel_maker):
+        control_panel = my_panel_maker.control_panel
+        getsetpanel.__init__(self, control_panel)
+
         self.train_data = None
         self.val_date = None
         self.split = None
         self.setup = True
 
-        self.control_panel = my_panel_maker.control_panel
-        self.batch_panel = my_panel_maker.makebatch()
+        self.nn_panel = my_panel_maker.control_panel
+        self.nn_panel = my_panel_maker.makebatch()
 
     def parse_data(self, data):
         n = int(1.00*len(data))  # first 90% will be train, rest val
@@ -115,17 +127,10 @@ class nnBatch:
         # nnGlobals.y = y
         return x
 
-    def get_user_panel(self):
-        self.control_panel.add(self.batch_panel.panel)
-
-    def hide_user_panel(self):
-        self.control_panel.forget(self.batch_panel.panel)
-
     def set_user_data(self):
-        # TODO: handle non numeric input
-        nnGlobals.batch_size = self.batch_panel.batch.get()
-        nnGlobals.block_size = self.batch_panel.block.get()
-        split = self.batch_panel.split.get()
+        nnGlobals.batch_size = self.nn_panel.batch.get()
+        nnGlobals.block_size = self.nn_panel.block.get()
+        split = self.nn_panel.split.get()
         if (split == 1):
             self.split = "train"
         else:
@@ -147,26 +152,22 @@ class nnBatch:
         return x
 
 
-class nnLinear(nn.Module):
+class nnLinear(nn.Module, getsetpanel):
     def __init__(self, my_panel_maker):
-        super().__init__()
+        control_panel = my_panel_maker.control_panel
+        getsetpanel.__init__(self, control_panel)
+        nn.Module.__init__(self)
+
         self.lin1 = None
         self.dim = None
         self.setup = True
 
         # panel data
         self.control_panel = my_panel_maker.control_panel
-        self.lin_panel = my_panel_maker.makelin()
-
-    def get_user_panel(self):
-        self.control_panel.add(self.lin_panel.panel)
-
-    def hide_user_panel(self):
-        self.control_panel.forget(self.lin_panel.panel)
+        self.nn_panel = my_panel_maker.makelin()
 
     def set_user_data(self):
-        # TODO: handle non numeric input
-        linval = self.lin_panel.spinvar.get()
+        linval = self.nn_panel.spinvar.get()
         self.lin1 = nn.Linear(
             self.dim, linval, bias=False
         ).to(nnGlobals.device)
@@ -185,9 +186,11 @@ class nnLinear(nn.Module):
         return data
 
 
-class nnEmbedings(nn.Module):
+class nnEmbedings(nn.Module, getsetpanel):
     def __init__(self, my_panel_maker):
-        super().__init__()
+        control_panel = my_panel_maker.control_panel
+        getsetpanel.__init__(self, control_panel)
+        nn.Module.__init__(self)
 
         self.token_embedding_table = None
         self.position_embedding_table = None
@@ -195,16 +198,10 @@ class nnEmbedings(nn.Module):
 
         # panel data
         self.control_panel = my_panel_maker.control_panel
-        self.embs_panel = my_panel_maker.makeembs()
-
-    def get_user_panel(self):
-        self.control_panel.add(self.embs_panel.panel)
-
-    def hide_user_panel(self):
-        self.control_panel.forget(self.embs_panel.panel)
+        self.nn_panel = my_panel_maker.makeembs()
 
     def set_user_data(self):
-        embval = self.embs_panel.embs.get()
+        embval = self.nn_panel.embs.get()
         nnGlobals.emb_dims = embval
 
         self.token_embedding_table = nn.Embedding(
@@ -232,9 +229,11 @@ class nnEmbedings(nn.Module):
         return x
 
 
-class nnMultiply:
+class nnMultiply(getsetpanel):
     def __init__(self, my_panel_maker):
-        super().__init__()
+        control_panel = my_panel_maker.control_panel
+        getsetpanel.__init__(self, control_panel)
+
         self.transposea = None
         self.transposeb = None
         self.a = None
@@ -243,17 +242,11 @@ class nnMultiply:
 
         # panel data
         self.control_panel = my_panel_maker.control_panel
-        self.mult_panel = my_panel_maker.makemult()
-
-    def get_user_panel(self):
-        self.control_panel.add(self.mult_panel.panel)
-
-    def hide_user_panel(self):
-        self.control_panel.forget(self.mult_panel.panel)
+        self.nn_panel = my_panel_maker.makemult()
 
     def set_user_data(self):
-        self.transposea = self.mult_panel.transposea.get()
-        self.transposeb = self.mult_panel.transposeb.get()
+        self.transposea = self.nn_panel.transposea.get()
+        self.transposeb = self.nn_panel.transposeb.get()
 
     def run(self, matrix):
         print("running embs")
@@ -283,17 +276,18 @@ class nnMultiply:
             return None
 
 
-class nnScript:
+class nnScript(getsetpanel):
     def __init__(self, my_panel_maker):
-        super().__init__()
+        control_panel = my_panel_maker.control_panel
+        getsetpanel.__init__(self, control_panel)
+
         self.exec_file = None
         self.exec_string = None
-
         self.setup = True
 
         # panel data
         self.control_panel = my_panel_maker.control_panel
-        self.script_panel = my_panel_maker.makescript(self.filesave)
+        self.nn_panel = my_panel_maker.makescript(self.filesave)
 
     def filesave(self):
         pass
@@ -302,15 +296,9 @@ class nnScript:
         # set the entry to the file
         pass
 
-    def get_user_panel(self):
-        self.control_panel.add(self.script_panel.panel)
-
-    def hide_user_panel(self):
-        self.control_panel.forget(self.script_panel.panel)
-
     def set_user_data(self):
-        self.exec_file = self.script_panel.entrya.get()
-        self.exec_string_obj = self.script_panel.entryb
+        self.exec_file = self.nn_panel.entrya.get()
+        self.exec_string_obj = self.nn_panel.entryb
 
     def run(self, matrix):
         print("running script")
@@ -337,42 +325,74 @@ class nnScript:
         return c
 
 
-class gate:
-    def __init__(self, name):
-        self.name = name
+class nnRelu(nn.Module, getsetpanel):
+    def __init__(self, my_panel_maker):
+        control_panel = my_panel_maker.control_panel
+        getsetpanel.__init__(self, control_panel)
+        nn.Module.__init__(self)
 
-
-class notepad:
-    def __init__(self, name):
-        self.name = name
-
-
-class nnRelu:
-    def __init__(self):
         self.relu = nn.Relu()
+        self.setup = False
 
-    # this input is a tensor
-    def run(self, InputNode):
-        return self.relu(InputNode)
+        # panel data
+        self.control_panel = my_panel_maker.control_panel
+        self.nn_panel = my_panel_maker.makelin()
+
+    def set_user_data(self):
+        pass
+
+    def run(self, matrix):
+        print("running relu")
+        return self.relu(matrix)
 
 
-class nnDropout:
-    def __init__(self, dropout):
+class nnDropout(nn.Module, getsetpanel):
+    def __init__(self, my_panel_maker):
+        control_panel = my_panel_maker.control_panel
+        getsetpanel.__init__(self, control_panel)
+        nn.Module.__init__(self)
+
+        self.drop = None
+        self.setup = True
+
+        # panel data
+        self.control_panel = my_panel_maker.control_panel
+        self.nn_panel = my_panel_maker.makelin()
+
+    def set_user_data(self):
+        dropout = self.nn_panel.spinvar.get()
         self.drop = nn.dropout(dropout)
 
-    # this input is a tensor
-    def run(self, InputNode):
-        return self.drop(InputNode)
+    def run(self, matrix):
+        print("running relu")
+        if (self.setup):
+            self.set_user_data()
+            self.setup = False
+
+        return self.drop(matrix)
 
 
 class nnLayerNorm:
-    def __init__(self):
-        self.ln = None
+    def __init__(self, my_panel_maker):
+        control_panel = my_panel_maker.control_panel
+        getsetpanel.__init__(self, control_panel)
+        nn.Module.__init__(self)
 
-    # this input is a tensor
-    def run(self, InputNode):
-        if (not self.ln):
-            embs = InputNode.shape[0]
-            self.ln = nn.LayerNorm(embs)
+        self.lay = None
+        self.setup = True
 
-        return self.lin(InputNode)
+        # panel data
+        self.control_panel = my_panel_maker.control_panel
+        self.nn_panel = my_panel_maker.makelin()
+
+    def set_user_data(self):
+        dropout = self.nn_panel.spinvar.get()
+        self.lay = nn.LayerNorm(dropout)
+
+    def run(self, matrix):
+        print("running relu")
+        if (self.setup):
+            self.set_user_data()
+            self.setup = False
+
+        return self.lay(matrix)

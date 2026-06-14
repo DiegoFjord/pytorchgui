@@ -45,7 +45,7 @@ class panel_maker:
         panel.add(entry)
 
         lp = linpanel(panel, label, spinbox, entry)
-        lp.dims = dims
+        lp.spinvar = dims
         return lp
 
     def makebatch(self):
@@ -190,7 +190,7 @@ class linpanel:
         self.spinbox = spinbox
         self.entry = entry
 
-        self.dims = None
+        self.spinvar = None
 
 
 class startpanel:
