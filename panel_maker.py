@@ -34,10 +34,10 @@ class panel_maker:
 
     def makelin(self):
         panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
-        dims = tk.IntVar(value=8)
+        width = tk.IntVar(value=8)
 
         label = tk.Label(panel, text="lin menu")
-        spinbox = tk.Spinbox(panel, from_=0, to=1024, textvariable=dims)
+        spinbox = tk.Spinbox(panel, from_=0, to=1024, textvariable=width)
         entry = tk.Entry(panel)
 
         panel.add(label)
@@ -45,7 +45,7 @@ class panel_maker:
         panel.add(entry)
 
         lp = linpanel(panel, label, spinbox, entry)
-        lp.spinvar = dims
+        lp.width = width
         return lp
 
     def makebatch(self):
@@ -138,6 +138,35 @@ class panel_maker:
 
         return sp
 
+    def makesplit(self):
+        panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
+        fraction = tk.IntVar(value=4)
+        offset = tk.IntVar(value=4)
+
+        label = tk.Label(panel, text="split menu")
+        spinboxa = tk.Spinbox(panel, from_=1, to=32, textvariable=fraction)
+        spinboxb = tk.Spinbox(panel, from_=1, to=32, textvariable=offset)
+
+        panel.add(label)
+        panel.add(spinboxa)
+        panel.add(spinboxb)
+
+        sp = splitpanel(panel, label, spinboxa, spinboxb)
+        sp.fraction = fraction
+        sp.block = offset
+        return sp
+
+
+class splitpanel:
+    def __init__(self, panel, label, spinboxa, spinboxb):
+        self.panel = panel
+        self.label = label
+        self.spinboxa = spinboxa
+        self.spinboxb = spinboxb
+
+        self.fraction = None
+        self.block = None
+
 
 class scriptpanel:
     def __init__(self, panel, label, button, entrya, entryb):
@@ -190,7 +219,7 @@ class linpanel:
         self.spinbox = spinbox
         self.entry = entry
 
-        self.spinvar = None
+        self.width = None
 
 
 class startpanel:

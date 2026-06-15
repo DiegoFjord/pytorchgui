@@ -4,7 +4,7 @@ from canvas import DragDropCanvas
 from control import control, nnItem
 from tkinter import ttk  # ttk is the modern tk
 from panel_maker import panel_maker
-from items import nnGlobals, nnStart, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript
+from items import nnGlobals, nnStart, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit
 # my imports
 
 
@@ -38,6 +38,10 @@ def update_label(out):
         item_type = nnMultiply(my_panel_maker)
         app.add_canvas_item(nnItem(item_type, selection))
 
+    if (selection == "Split"):
+        item_type = nnSplit(my_panel_maker)
+        app.add_canvas_item(nnItem(item_type, selection))
+
     if (selection == "Script"):
         item_type = nnScript(my_panel_maker)
         app.add_canvas_item(nnItem(item_type, selection))
@@ -54,7 +58,10 @@ def update_label(out):
 
 
 # object options
-options = ["Linear", "Batch", "Embeddings", "Multiply", "Script", "Line"]
+options = [
+    "Linear", "Batch", "Embeddings",
+    "Multiply", "Script", "Split", "Line"
+]
 
 # create objects
 control_panel = ttk.PanedWindow(root, orient=tk.HORIZONTAL, height=50)

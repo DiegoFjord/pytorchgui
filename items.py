@@ -167,9 +167,9 @@ class nnLinear(nn.Module, getsetpanel):
         self.nn_panel = my_panel_maker.makelin()
 
     def set_user_data(self):
-        linval = self.nn_panel.spinvar.get()
+        width = self.nn_panel.width.get()
         self.lin1 = nn.Linear(
-            self.dim, linval, bias=False
+            self.dim, width, bias=False
         ).to(nnGlobals.device)
 
         # this input is a tensor
@@ -396,3 +396,39 @@ class nnLayerNorm:
             self.setup = False
 
         return self.lay(matrix)
+
+
+class nnSplit(getsetpanel):
+    def __init__(self, my_panel_maker):
+        control_panel = my_panel_maker.control_panel
+        getsetpanel.__init__(self, control_panel)
+
+        self.fraction = None
+        self.block = None
+        self.setup = True
+
+        # panel data
+        self.control_panel = my_panel_maker.control_panel
+        self.nn_panel = my_panel_maker.makesplit()
+
+    def set_user_data(self):
+        self.fraction = self.nn_panel.fraction.get()
+        self.block = self.nn_panel.block.get()
+
+    def run(self, matrix):
+        print("running split")
+        if (self.setup):
+            self.set_user_data()
+            self.setup = False
+
+        remainder = matrix.size(-1) % self.fraction
+        if (remainder == 0 and self.block <= self.fraction):
+            chunks = torch.chunk(
+                matrix, chunks=self.fraction, dim=-1
+            )
+            print(matrix.shape)
+            print(chunks[0].shape)
+            return chunks[self.block-1]
+        else:
+            print("invlaid")
+            return None
