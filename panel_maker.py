@@ -156,6 +156,21 @@ class panel_maker:
         sp.block = offset
         return sp
 
+    def maketril(self):
+        panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
+        label = tk.Label(panel, text="split menu")
+
+        panel.add(label)
+
+        tp = trilpanel(panel, label)
+        return tp
+
+
+class trilpanel:
+    def __init__(self, panel, label):
+        self.panel = panel
+        self.label = label
+
 
 class splitpanel:
     def __init__(self, panel, label, spinboxa, spinboxb):

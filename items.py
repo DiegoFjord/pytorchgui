@@ -372,7 +372,7 @@ class nnDropout(nn.Module, getsetpanel):
         return self.drop(matrix)
 
 
-class nnLayerNorm:
+class nnLayerNorm(nn.Module, getsetpanel):
     def __init__(self, my_panel_maker):
         control_panel = my_panel_maker.control_panel
         getsetpanel.__init__(self, control_panel)
@@ -432,3 +432,40 @@ class nnSplit(getsetpanel):
         else:
             print("invlaid")
             return None
+
+
+class nnTril(nn.Module, getsetpanel):
+    def __init__(self, my_panel_maker):
+        control_panel = my_panel_maker.control_panel
+        getsetpanel.__init__(self, control_panel)
+        nn.Module.__init__(self)
+
+        # self.tril = None # do not uncomment
+        self.dima = None
+        self.dimb = None
+        self.ones = None
+        self.setup = True
+
+        # panel data
+        self.control_panel = my_panel_maker.control_panel
+        self.nn_panel = my_panel_maker.maketril()
+
+    def set_user_data(self):
+        device = nnGlobals.device
+        ones = torch.ones(self.dima, self.dimb)
+        ones.to(nnGlobals.device)
+        self.register_buffer('tril', torch.tril(ones).to(device))
+
+    def run(self, matrix):
+        print("running tril")
+        if (self.setup):
+            self.dima = matrix.size(-2)
+            self.dimb = matrix.size(-1)
+            self.set_user_data()
+            self.setup = False
+
+        data = matrix.masked_fill(
+            self.tril[:self.dima, :self.dimb] == 0, float('-inf')
+        )
+        print(data)
+        return data
