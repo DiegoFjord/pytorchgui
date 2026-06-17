@@ -65,6 +65,8 @@ class control:
 
         print("itemlist", itemlist)
 
+        # TODO: include globals stuff
+
 
 class nnserial:
     def __init__(self):

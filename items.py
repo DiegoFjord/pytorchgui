@@ -43,9 +43,12 @@ class nnStart(getsetpanel):
         # rendering
         self.nn_panel = my_panel_maker.makestart()
 
-    def set_user_data(self):
+    def get_user_data(self):
         self.filename = self.nn_panel.entry.get()
         self.execution = self.nn_panel.execute.get()
+
+    def set_user_data(self):
+        pass
 
     def readfile(self):
         # with open(self.filename, 'r', encoding="utf-8") as f:
@@ -76,6 +79,7 @@ class nnStart(getsetpanel):
 
     def runExecute(self):
         if (self.execution == 1):
+            print("\033[33mWarning:\033[0m" + " running test output on start")
             return torch.rand(16, 8, 4).to(nnGlobals.device)
         if (self.execution == 2):
             return self.readfile()
@@ -84,6 +88,7 @@ class nnStart(getsetpanel):
     def run(self, matrix):
         print("running start")
         if (self.setup):
+            self.get_user_data()
             self.set_user_data()
             self.setup = False
 
@@ -127,12 +132,13 @@ class nnBatch(getsetpanel):
         # nnGlobals.y = y
         return x
 
-    def set_user_data(self):
+    def get_user_data(self):
         nnGlobals.batch_size = self.nn_panel.batch.get()
         nnGlobals.block_size = self.nn_panel.block.get()
-        split = self.nn_panel.split.get()
+        self.split = self.nn_panel.split.get()
 
-        if (split == 1):
+    def set_user_data(self):
+        if (self.split):
             self.split = "train"
         else:
             self.split = "val"
@@ -140,6 +146,7 @@ class nnBatch(getsetpanel):
     def run(self, matrix):
         print("running batch")
         if (self.setup):
+            self.get_user_data()
             self.set_user_data()
             self.parse_data(matrix)
             self.setup = False
@@ -168,8 +175,10 @@ class nnLinear(nn.Module, getsetpanel):
         self.control_panel = my_panel_maker.control_panel
         self.nn_panel = my_panel_maker.makelin()
 
-    def set_user_data(self):
+    def get_user_data(self):
         self.width = self.nn_panel.width.get()
+
+    def set_user_data(self):
         self.lin1 = nn.Linear(
             self.dim, self.width, bias=False
         ).to(nnGlobals.device)
@@ -180,6 +189,7 @@ class nnLinear(nn.Module, getsetpanel):
         print("running lin")
         if (self.setup):
             self.dim = matrix.size(-1)
+            self.get_user_data()
             self.set_user_data()
             self.setup = False
 
@@ -196,24 +206,27 @@ class nnEmbedings(nn.Module, getsetpanel):
 
         self.token_embedding_table = None
         self.position_embedding_table = None
+        self.embs = None
         self.setup = True
 
         # panel data
         self.control_panel = my_panel_maker.control_panel
         self.nn_panel = my_panel_maker.makeembs()
 
-    def set_user_data(self):
-        embval = self.nn_panel.embs.get()
-        nnGlobals.emb_dims = embval
+    def get_user_data(self):
+        self.embs = self.nn_panel.embs.get()
+        nnGlobals.emb_dims = self.embs
 
+    def set_user_data(self):
         self.token_embedding_table = nn.Embedding(
-            nnGlobals.vocab_size, embval).to(nnGlobals.device)
+            nnGlobals.vocab_size, self.embs).to(nnGlobals.device)
         self.position_embedding_table = nn.Embedding(
-            nnGlobals.block_size, embval).to(nnGlobals.device)
+            nnGlobals.block_size, self.embs).to(nnGlobals.device)
 
     def run(self, matrix):
         print("running embs")
         if (self.setup):
+            self.get_user_data()
             self.set_user_data()
             self.setup = False
 
@@ -246,13 +259,17 @@ class nnMultiply(getsetpanel):
         self.control_panel = my_panel_maker.control_panel
         self.nn_panel = my_panel_maker.makemult()
 
-    def set_user_data(self):
+    def get_user_data(self):
         self.transposea = self.nn_panel.transposea.get()
         self.transposeb = self.nn_panel.transposeb.get()
+
+    def set_user_data(self):
+        pass
 
     def run(self, matrix):
         print("running embs")
         if (self.setup):
+            self.get_user_data()
             self.set_user_data()
             self.setup = False
 
@@ -298,14 +315,18 @@ class nnScript(getsetpanel):
         # set the entry to the file
         pass
 
-    def set_user_data(self):
+    def get_user_data(self):
         self.exec_file = self.nn_panel.entrya.get()
         self.exec_string_obj = self.nn_panel.entryb
+
+    def set_user_data(self):
+        pass
 
     def run(self, matrix):
         print("running script")
         if (self.setup):
             self.fileget()
+            self.get_user_data()
             self.set_user_data()
             self.setup = False
 
@@ -340,6 +361,9 @@ class nnRelu(nn.Module, getsetpanel):
         self.control_panel = my_panel_maker.control_panel
         self.nn_panel = my_panel_maker.makelin()
 
+    def get_user_data(self):
+        pass
+
     def set_user_data(self):
         pass
 
@@ -355,19 +379,23 @@ class nnDropout(nn.Module, getsetpanel):
         nn.Module.__init__(self)
 
         self.drop = None
+        self.dropval = None
         self.setup = True
 
         # panel data
         self.control_panel = my_panel_maker.control_panel
         self.nn_panel = my_panel_maker.makelin()
 
+    def get_user_data(self):
+        self.dropval = self.nn_panel.spinvar.get()
+
     def set_user_data(self):
-        dropout = self.nn_panel.spinvar.get()
-        self.drop = nn.dropout(dropout)
+        self.drop = nn.dropout(self.dropval)
 
     def run(self, matrix):
         print("running relu")
         if (self.setup):
+            self.get_user_data()
             self.set_user_data()
             self.setup = False
 
@@ -395,6 +423,7 @@ class nnLayerNorm(nn.Module, getsetpanel):
         print("running relu")
         if (self.setup):
             self.dim = matrix.size(-1)
+            self.get_user_data()
             self.set_user_data()
             self.setup = False
 
@@ -421,6 +450,7 @@ class nnSplit(getsetpanel):
     def run(self, matrix):
         print("running split")
         if (self.setup):
+            self.get_user_data()
             self.set_user_data()
             self.setup = False
 
@@ -464,6 +494,7 @@ class nnTril(nn.Module, getsetpanel):
         if (self.setup):
             self.dima = matrix.size(-2)
             self.dimb = matrix.size(-1)
+            self.get_user_data()
             self.set_user_data()
             self.setup = False
 
