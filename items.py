@@ -4,7 +4,7 @@ import torch
 import torch_directml
 # my imports
 
-# NOTE: maybe make a gobals class
+# FIX: make a get and set for user data
 
 # global vars
 
@@ -131,6 +131,7 @@ class nnBatch(getsetpanel):
         nnGlobals.batch_size = self.nn_panel.batch.get()
         nnGlobals.block_size = self.nn_panel.block.get()
         split = self.nn_panel.split.get()
+
         if (split == 1):
             self.split = "train"
         else:
@@ -160,6 +161,7 @@ class nnLinear(nn.Module, getsetpanel):
 
         self.lin1 = None
         self.dim = None
+        self.width = None
         self.setup = True
 
         # panel data
@@ -167,9 +169,9 @@ class nnLinear(nn.Module, getsetpanel):
         self.nn_panel = my_panel_maker.makelin()
 
     def set_user_data(self):
-        width = self.nn_panel.width.get()
+        self.width = self.nn_panel.width.get()
         self.lin1 = nn.Linear(
-            self.dim, width, bias=False
+            self.dim, self.width, bias=False
         ).to(nnGlobals.device)
 
         # this input is a tensor
@@ -256,9 +258,9 @@ class nnMultiply(getsetpanel):
 
         if (self.a is not None):
             # run multiplication
-            if (self.transposea == 1):
+            if (self.transposea):
                 self.a = self.a.transpose(-2, -1)
-            if (self.transposeb == 1):
+            if (self.transposeb):
                 matrix = matrix.transpose(-2, -1)
 
             print(self.a.shape)
@@ -380,18 +382,19 @@ class nnLayerNorm(nn.Module, getsetpanel):
 
         self.lay = None
         self.setup = True
+        self.dim = None
 
         # panel data
         self.control_panel = my_panel_maker.control_panel
         self.nn_panel = my_panel_maker.makelin()
 
     def set_user_data(self):
-        dropout = self.nn_panel.spinvar.get()
-        self.lay = nn.LayerNorm(dropout)
+        self.lay = nn.LayerNorm(self.dim)
 
     def run(self, matrix):
         print("running relu")
         if (self.setup):
+            self.dim = matrix.size(-1)
             self.set_user_data()
             self.setup = False
 

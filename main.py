@@ -84,6 +84,7 @@ label2 = tk.Label(root, text="Please make a selection", font=("Arial", 12))
 combo = ttk.Combobox(root, values=options, state="readonly")
 start_button = ttk.Button(root, text="Start Progress", command=controller.run)
 mouse_button = ttk.Button(root, text="set mouse", command=setmouse)
+save_button = ttk.Button(root, text="jsonify", command=controller.save)
 
 # handle objects
 combo.bind("<<ComboboxSelected>>", update_label)
@@ -94,6 +95,7 @@ label2.pack(pady=20)
 combo.pack(pady=5)
 start_button.pack(pady=10)
 mouse_button.pack(pady=10)
+save_button.pack(pady=5)
 control_panel.pack(fill=tk.Y, expand=False)
 app.canvas.pack(fill=tk.BOTH, expand=False)
 
