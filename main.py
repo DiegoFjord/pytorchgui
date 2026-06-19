@@ -5,6 +5,9 @@ from control import control, nnItem
 from tkinter import ttk  # ttk is the modern tk
 from panel_maker import panel_maker
 from items import nnGlobals, nnStart, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril
+from screenItems import screenItems
+from handlefile import handlefile
+from nnMaker import nnMaker
 # my imports
 
 
@@ -17,88 +20,34 @@ root.geometry("750x750")
 
 
 def setmouse():
-    app.state = "Mouse"
+    ddCanvas.state = "Mouse"
 
 
-def update_label(out):
-    print(out)
-    selection = combo.get()
-    item_type = None
-
-    if (selection == "Line"):
-        app.state = selection
-    else:
-        app.state = "Mouse"
-
-    if (selection == "Batch"):
-        item_type = nnBatch(my_panel_maker)
-        app.add_canvas_item(nnItem(item_type, selection))
-
-    if (selection == "Multiply"):
-        item_type = nnMultiply(my_panel_maker)
-        app.add_canvas_item(nnItem(item_type, selection))
-
-    if (selection == "Split"):
-        item_type = nnSplit(my_panel_maker)
-        app.add_canvas_item(nnItem(item_type, selection))
-
-    if (selection == "Script"):
-        item_type = nnScript(my_panel_maker)
-        app.add_canvas_item(nnItem(item_type, selection))
-
-    if (selection == "Embeddings"):
-        item_type = nnEmbedings(my_panel_maker)
-        item_type.to(nnGlobals.device)
-        app.add_canvas_item(nnItem(item_type, selection))
-
-    if (selection == "Linear"):
-        item_type = nnLinear(my_panel_maker)
-        item_type.to(nnGlobals.device)
-        app.add_canvas_item(nnItem(item_type, selection))
-
-    if (selection == "Tril"):
-        item_type = nnTril(my_panel_maker)
-        item_type.to(nnGlobals.device)
-        app.add_canvas_item(nnItem(item_type, selection))
+def make_nnItem(out):
+    selection = item_decl.combo.get()
+    _ = my_nn_maker.make_nnItem(selection)
 
 
-# object options
-options = [
-    "Linear", "Batch", "Embeddings",
-    "Multiply", "Script", "Split", "Line",
-    "Tril"
-]
-
-# create objects
+# holds items
+controller = control()
+# holds selected item panel
 control_panel = ttk.PanedWindow(root, orient=tk.HORIZONTAL, height=50)
+# creates item panels
 my_panel_maker = panel_maker(control_panel)
-
-controller = control(root)
-controller.treeStart = nnItem(nnStart("Filename", my_panel_maker), "Start")
+# controlloer
+controller.treeStart = nnItem(
+    nnStart("Filename", my_panel_maker), "Start"
+)
+# ddCanvas
 canvas = tk.Canvas(root, width=400, height=400, bg="white")
-
-app = DragDropCanvas(canvas, controller)
-
-label = tk.Label(root, text="App")
-label2 = tk.Label(root, text="Please make a selection", font=("Arial", 12))
-combo = ttk.Combobox(root, values=options, state="readonly")
-start_button = ttk.Button(root, text="Start Progress", command=controller.run)
-mouse_button = ttk.Button(root, text="set mouse", command=setmouse)
-save_button = ttk.Button(root, text="jsonify", command=controller.save)
-
-# handle objects
-combo.bind("<<ComboboxSelected>>", update_label)
-control_panel.add(label)
-
-# render objects
-label2.pack(pady=20)
-combo.pack(pady=5)
-start_button.pack(pady=10)
-mouse_button.pack(pady=10)
-save_button.pack(pady=5)
-control_panel.pack(fill=tk.Y, expand=False)
-app.canvas.pack(fill=tk.BOTH, expand=False)
-
-# set objects
-
+ddCanvas = DragDropCanvas(canvas, controller)
+# creates items
+my_nn_maker = nnMaker(my_panel_maker, controller, ddCanvas)
+# file save/load
+handler = handlefile(controller, my_nn_maker)
+# create/render items
+item_decl = screenItems(
+    root, controller, handler, ddCanvas, control_panel, setmouse, make_nnItem
+)
+# grab items
 root.mainloop()

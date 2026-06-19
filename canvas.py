@@ -109,7 +109,7 @@ class DragDropCanvas:
             tempdict = self.controller.itemset
 
             # Move the item by the offset distance
-            if (self.state == "Mouse"):
+            if (self.state != "Line"):
                 self.canvas.move(self.selected_id, dx, dy)
                 # update the line attached to the item
                 for lineend in tempdict[self.selected_id].line_prevs:

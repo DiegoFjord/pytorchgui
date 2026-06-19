@@ -2,13 +2,9 @@ import re
 import torch.nn as nn
 import torch
 import torch_directml
-# my imports
 
-# FIX: make a get and set for user data
 
 # global vars
-
-
 class nnGlobals:
     vocab_size = None
     block_size = None
@@ -430,6 +426,7 @@ class nnLayerNorm(nn.Module, getsetpanel):
         return self.lay(matrix)
 
 
+# FIX: two inputs?
 class nnSplit(getsetpanel):
     def __init__(self, my_panel_maker):
         control_panel = my_panel_maker.control_panel
@@ -443,9 +440,12 @@ class nnSplit(getsetpanel):
         self.control_panel = my_panel_maker.control_panel
         self.nn_panel = my_panel_maker.makesplit()
 
-    def set_user_data(self):
+    def get_user_data(self):
         self.fraction = self.nn_panel.fraction.get()
         self.block = self.nn_panel.block.get()
+
+    def set_user_data(self):
+        pass
 
     def run(self, matrix):
         print("running split")
@@ -482,6 +482,9 @@ class nnTril(nn.Module, getsetpanel):
         # panel data
         self.control_panel = my_panel_maker.control_panel
         self.nn_panel = my_panel_maker.maketril()
+
+    def get_user_data(self):
+        pass
 
     def set_user_data(self):
         device = nnGlobals.device
