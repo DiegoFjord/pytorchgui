@@ -4,7 +4,7 @@ from canvas import DragDropCanvas
 from control import control, nnItem
 from tkinter import ttk  # ttk is the modern tk
 from panel_maker import panel_maker
-from items import nnGlobals, nnStart, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril
+from items import nnStart
 from screenItems import screenItems
 from handlefile import handlefile
 from nnMaker import nnMaker

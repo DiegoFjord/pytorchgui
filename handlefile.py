@@ -1,6 +1,6 @@
 import json
 from control import nnItem
-from serial import nnserial
+from serial import nnserial, nndeserial
 from items import nnGlobals, nnStart, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril, nnDropout, nnGlobals
 # this is a comment
 
@@ -13,6 +13,7 @@ class handlefile:
 
     # TODO:
     def load(self):
+        deserializer: nndeserial = nndeserial(self.my_nn_maker)
         with open(self.filename, "r", encoding="utf-8") as f:
             text = f.read()
 
@@ -27,7 +28,7 @@ class handlefile:
         jsonlist = json_items["itemlist"]
         itemlist.append(self.controller.treeStart)
         for item in jsonlist:
-            temp_item = self.my_nn_maker.make_nnItem(item["type"])
+            temp_item = deserializer.deserialize(item)
             if (temp_item is not None):
                 itemlist.append(temp_item)
 
@@ -39,6 +40,7 @@ class handlefile:
                 itemlist[nn_index].prevs.append(listitem)
 
         # TODO: add strings
+        # FIX: does not set the item_panel (VERY IMPORTANT!)
 
     def save(self):
         serial = nnserial()

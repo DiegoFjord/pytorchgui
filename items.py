@@ -40,7 +40,7 @@ class nnStart(getsetpanel):
         self.nn_panel = my_panel_maker.makestart()
 
     def get_user_data(self):
-        self.filename = self.nn_panel.entry.get()
+        self.filename = self.nn_panel.filename.get()
         self.execution = self.nn_panel.execute.get()
 
     def set_user_data(self):
@@ -87,6 +87,8 @@ class nnStart(getsetpanel):
             self.get_user_data()
             self.set_user_data()
             self.setup = False
+
+        print(self.filename)
 
         data = self.runExecute()
         # fetch control _panel values on run
@@ -297,7 +299,7 @@ class nnScript(getsetpanel):
         getsetpanel.__init__(self, control_panel)
 
         self.exec_file = None
-        self.exec_string = None
+        self.prog = None
         self.setup = True
 
         # panel data
@@ -312,8 +314,8 @@ class nnScript(getsetpanel):
         pass
 
     def get_user_data(self):
-        self.exec_file = self.nn_panel.entrya.get()
-        self.exec_string_obj = self.nn_panel.entryb
+        self.exec_file = self.nn_panel.filename.get()
+        self.prog = self.nn_panel.prog.get()
 
     def set_user_data(self):
         pass
@@ -336,7 +338,7 @@ class nnScript(getsetpanel):
 
         # 2. Pass the dictionary into the globals parameter of exec()
         # exec("c = x.sum(1, keepdim=False)", exec_scope)
-        exec(self.exec_string_obj.get(), exec_scope)
+        exec(self.prog, exec_scope)
 
         # 3. Extract your new tensor 'c' from the environment dictionary
         c = exec_scope['c']
@@ -398,6 +400,7 @@ class nnDropout(nn.Module, getsetpanel):
         return self.drop(matrix)
 
 
+# FIX: maybe?
 class nnLayerNorm(nn.Module, getsetpanel):
     def __init__(self, my_panel_maker):
         control_panel = my_panel_maker.control_panel
@@ -411,6 +414,9 @@ class nnLayerNorm(nn.Module, getsetpanel):
         # panel data
         self.control_panel = my_panel_maker.control_panel
         self.nn_panel = my_panel_maker.makelin()
+
+    def get_user_data(self):
+        pass
 
     def set_user_data(self):
         self.lay = nn.LayerNorm(self.dim)

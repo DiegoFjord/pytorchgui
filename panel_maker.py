@@ -14,13 +14,14 @@ class panel_maker:
     # training data size
     def makestart(self):
         panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
-        v = tk.IntVar(value=1)
+        ex = tk.IntVar(value=1)
+        filename = tk.StringVar()
 
         label = tk.Label(panel, text="start menu")
-        test = tk.Radiobutton(panel, text="test", variable=v, value=1)
-        run = tk.Radiobutton(panel, text="run", variable=v, value=2)
-        custom = tk.Radiobutton(panel, text="custom", variable=v, value=3)
-        entry = tk.Entry(panel)
+        test = tk.Radiobutton(panel, text="test", variable=ex, value=1)
+        run = tk.Radiobutton(panel, text="run", variable=ex, value=2)
+        custom = tk.Radiobutton(panel, text="custom", variable=ex, value=3)
+        entry = tk.Entry(panel, textvariable=filename)
 
         panel.add(label)
         panel.add(test)
@@ -29,7 +30,8 @@ class panel_maker:
         panel.add(entry)
 
         sp = startpanel(panel, label, entry)
-        sp.execute = v
+        sp.execute = ex
+        sp.filename = filename
         return sp
 
     def makelin(self):
@@ -119,13 +121,14 @@ class panel_maker:
 
     def makescript(self, filesave):
         panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
+        filename = tk.StringVar(value="filename")
         prog = tk.StringVar(value="# set to default")
 
         label = tk.Label(panel, text="script menu")
         button = ttk.Button(
             panel, text="filesave", command=filesave
         )
-        entrya = tk.Entry(panel)
+        entrya = tk.Entry(panel, textvariable=filename)
         entryb = tk.Entry(panel, textvariable=prog)
 
         panel.add(label)
@@ -134,6 +137,7 @@ class panel_maker:
         panel.add(entryb)
 
         sp = scriptpanel(panel, label, button, entrya, entryb)
+        sp.filename = filename
         sp.prog = prog
 
         return sp
@@ -191,6 +195,7 @@ class scriptpanel:
         self.entrya = entrya
         self.entryb = entryb
 
+        self.filename = None
         self.prog = None
 
 
@@ -244,3 +249,4 @@ class startpanel:
         self.entry = entry
 
         self.execute = None
+        self.filename = None
