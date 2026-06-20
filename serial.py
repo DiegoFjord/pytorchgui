@@ -18,46 +18,27 @@ class nndeserial:
         panel = my_nnItem.curr.nn_panel
 
         match my_nnItem.nntype:
-            case "Start": self.start(panel, item_json)
-            case "Linear": self.linear(panel, item_json)
-            case "Batch": self.batch(panel, item_json)
-            case "Embeddings": self.emb(panel, item_json)
-            case "Multiply": self.mult(panel, item_json)
-            case "Script": self.script(panel, item_json)
-            case "Dropout": self.script(panel, item_json)
-            case "Split": self.split(panel, item_json)
-            case "Tril": self.tril(panel, item_json)
+            case "Start":
+                panel.filename.set(item_json["filename"])
+            case "Linear":
+                panel.width.set(item_json["width"])
+            case "Batch":
+                panel.split.set(item_json["split"])
+            case "Embeddings":
+                panel.embs.set(item_json["embs"])
+            case "Multiply":
+                panel.transposea.set(item_json["transposea"])
+                panel.transposeb.set(item_json["transposeb"])
+            case "Script":
+                panel.filename.set(item_json["filename"])
+                panel.prog.set(item_json["prog"])
+            case "Dropout":
+                panel.spinvar.set(item_json["dropout"])
+            case "Split":
+                panel.fraction.set(item_json["fraction"])
+                panel.fraction.set(item_json["block"])
+            case "Tril": pass
         return my_nnItem
-
-    def start(self, panel, item_json):
-        panel.filename.set(item_json["filename"])
-
-    def linear(self, panel, item_json):
-        panel.width.set(item_json["width"])
-
-    def batch(self, panel, item_json):
-        panel.split.set(item_json["split"])
-
-    def emb(self, panel, item_json):
-        panel.embs.set(item_json["embs"])
-
-    def mult(self, panel, item_json):
-        panel.transposea.set(item_json["transposea"])
-        panel.transposeb.set(item_json["transposeb"])
-
-    def script(self, panel, item_json):
-        panel.filename.set(item_json["filename"])
-        panel.prog.set(item_json["prog"])
-
-    def drop(self, panel, item_json):
-        panel.spinvar.set(item_json["dropout"])
-
-    def split(self, panel, item_json):
-        panel.fraction.set(item_json["fraction"])
-        panel.fraction.set(item_json["block"])
-
-    def tril(self, panel, item_json):
-        pass
 
 
 class nnserial:
