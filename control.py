@@ -10,7 +10,6 @@ class nnItem:
         self.line_prevs = []
 
     def call(self, prev):
-        # FIX: account for looping (might not be an issue?)
         # if result is None break
         result = self.curr.run(prev)
         if (result is None):

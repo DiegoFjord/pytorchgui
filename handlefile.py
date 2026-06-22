@@ -11,7 +11,7 @@ class handlefile:
         self.my_nn_maker = my_nn_maker
         self.filename = "savefile.txt"
 
-    # TODO:
+    # FIX: delete extra start
     def load(self):
         deserializer: nndeserial = nndeserial(self.my_nn_maker)
         with open(self.filename, "r", encoding="utf-8") as f:
@@ -26,11 +26,12 @@ class handlefile:
         nnGlobals.block_size = globalsdict["block_size"]
         # create items
         jsonlist = json_items["itemlist"]
-        itemlist.append(self.controller.treeStart)
         for item in jsonlist:
             temp_item = deserializer.deserialize(item)
-            if (temp_item is not None):
-                itemlist.append(temp_item)
+            itemlist.append(temp_item)
+
+        # first item is the tree start
+        self.controller.treeStart = itemlist[0]
 
         # follows
         followdict = json_items["followdict"]
@@ -38,9 +39,6 @@ class handlefile:
             for nn_index in followdict[str(index)]:
                 listitem.nexts.append(itemlist[nn_index])
                 itemlist[nn_index].prevs.append(listitem)
-
-        # TODO: add strings
-        # FIX: does not set the item_panel (VERY IMPORTANT!)
 
     def save(self):
         serial = nnserial()

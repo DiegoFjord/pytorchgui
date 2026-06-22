@@ -1,5 +1,5 @@
 from control import nnItem
-from items import nnGlobals, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril
+from items import nnStart, nnGlobals, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril
 # this is a comment
 # TODO: make this its own file/class
 
@@ -13,6 +13,7 @@ class nnMaker:
     def get_nn_item(self, selection):
         pm = self.my_panel_maker
         match selection:
+            case "Start": return nnStart(pm)
             case "Batch": return nnBatch(pm)
             case "Multiply": return nnMultiply(pm)
             case "Split": return nnSplit(pm)

@@ -1,6 +1,8 @@
 # this is a comment
+from designer import designer
 from ctypes import windll
 windll.shcore.SetProcessDpiAwareness(1)
+
 
 # TODO: label id items ass nn_xxx_id
 
@@ -9,16 +11,10 @@ class DragDropCanvas:
     def __init__(self, canvas, controller):
         # breakpoint()
         self.controller = controller
+        self.my_designer = designer(canvas)
 
         # Create canvas
         self.canvas = canvas
-
-        # Create start
-        start_id = self.canvas.create_rectangle(
-            50, 50, 150, 150, fill="yellow"
-        )
-        self.controller.itemset[start_id] = controller.treeStart
-        self.controller.itemset[start_id].curr.get_user_panel()
 
         # Bind mouse events to the canvas
         self.canvas.bind("<Button-1>", self.on_press)
@@ -29,28 +25,16 @@ class DragDropCanvas:
         self.state = None  # set to mouse linear...
         self.base_id = None  # the first item selcted(used for line)
         self.selected_id = None  # current item selected for drawing
-        self.last = start_id  # last/current item selected
+        self.last = None  # last/current item selected
         self.start_x = 0
         self.start_y = 0
+        self.item_dict = {}
 
     def add_canvas_item(self, bind):
         # Create a draggable rectangle
-        color = None
-        if (bind.nntype == "Batch"):
-            color = "darkblue"
-        elif (bind.nntype == "Embeddings"):
-            color = "green"
-        elif (bind.nntype == "Linear"):
-            color = "light blue"
-        elif (bind.nntype == "Script"):
-            color = "light pink"
-        else:
-            color = "red"
-
-        item_id = self.canvas.create_rectangle(
-            50, 50, 150, 150, fill=color
-        )
+        item_id = self.my_designer.getbystring(bind.nntype)
         self.controller.itemset[item_id] = bind
+        self.set_control_panel(self.controller.itemset, item_id)
         print(f"made {item_id}")
 
     def get_line_coors(self, x0, y0, x1, y1):
@@ -64,7 +48,8 @@ class DragDropCanvas:
         return parcurve
 
     def set_control_panel(self, tempdict, clicked_id):
-        tempdict[self.last].curr.hide_user_panel()
+        if (self.last is not None):
+            tempdict[self.last].curr.hide_user_panel()
         tempdict[clicked_id].curr.get_user_panel()
         self.last = clicked_id
 
@@ -75,6 +60,7 @@ class DragDropCanvas:
 
         tempdict = self.controller.itemset
 
+        # fix for overlay objects
         if clicked_ids:
             clicked_id = clicked_ids[0]
             self.start_x = event.x
@@ -100,6 +86,17 @@ class DragDropCanvas:
                 else:
                     self.selected_id = clicked_ids[0]
 
+    def move_end(self, line_id, a, b, c, d):
+        curr_coords = self.canvas.coords(line_id)
+        self.canvas.coords(
+            line_id,
+            *self.get_line_coors(
+                curr_coords[0] + a,
+                curr_coords[1] + b,
+                curr_coords[6] + c,
+                curr_coords[7] + d)
+        )
+
     def on_drag(self, event):
         """Drags the selected item."""
         if self.selected_id:
@@ -111,29 +108,12 @@ class DragDropCanvas:
             # Move the item by the offset distance
             if (self.state != "Line"):
                 self.canvas.move(self.selected_id, dx, dy)
+                self.my_designer.move(self.selected_id, dx, dy)
                 # update the line attached to the item
                 for lineend in tempdict[self.selected_id].line_prevs:
-                    curr_coords = self.canvas.coords(lineend)
-                    self.canvas.coords(
-                        lineend,
-                        *self.get_line_coors(
-                            curr_coords[0],
-                            curr_coords[1],
-                            curr_coords[6] + dx,
-                            curr_coords[7] + dy)
-                    )
+                    self.move_end(lineend, 0, 0, dx, dy)
                 for linestart in tempdict[self.selected_id].line_nexts:
-                    curr_coords = self.canvas.coords(linestart)
-                    self.canvas.coords(
-                        linestart,
-                        *self.get_line_coors(
-                            curr_coords[0] + dx,
-                            curr_coords[1] + dy,
-                            curr_coords[6],
-                            curr_coords[7]
-                        )
-                    )
-
+                    self.move_end(linestart, dx, dy, 0, 0)
                 # Update the starting position for the next movement frame
                 self.start_x = event.x
                 self.start_y = event.y
@@ -158,7 +138,9 @@ class DragDropCanvas:
         if (nntype == "Start"):
             return False
 
-        if (nntype == "Multiply"):
+        if (nntype == "Script"):
+            pass
+        elif (nntype == "Multiply"):
             if (len(tempdict[target_id].prevs) > 1):
                 return False
         elif (len(tempdict[target_id].prevs) > 0):

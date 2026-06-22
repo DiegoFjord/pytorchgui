@@ -10,6 +10,7 @@ class nnGlobals:
     block_size = None
     batch_size = None
     emb_dims = None
+    y = None
     device = torch_directml.device()
 
 
@@ -27,7 +28,7 @@ class getsetpanel:
 
 
 class nnStart(getsetpanel):
-    def __init__(self, filename, my_panel_maker):
+    def __init__(self, my_panel_maker):
         control_panel = my_panel_maker.control_panel
         getsetpanel.__init__(self, control_panel)
 
@@ -127,7 +128,7 @@ class nnBatch(getsetpanel):
         x = torch.stack([data[i:i + block_size] for i in ix])
         y = torch.stack([data[i+1:i + block_size + 1] for i in ix])
         x, y = x.to(nnGlobals.device), y.to(nnGlobals.device)
-        # nnGlobals.y = y
+        nnGlobals.y = y
         return x
 
     def get_user_data(self):
@@ -301,6 +302,7 @@ class nnScript(getsetpanel):
         self.exec_file = None
         self.prog = None
         self.setup = True
+        self.count = 0
 
         # panel data
         self.control_panel = my_panel_maker.control_panel
@@ -334,6 +336,8 @@ class nnScript(getsetpanel):
             'torch': torch,
             'device': nnGlobals.device,
             'x': matrix,
+            'y': nnGlobals.y,
+            'count': self.count
         }
 
         # 2. Pass the dictionary into the globals parameter of exec()
@@ -343,6 +347,7 @@ class nnScript(getsetpanel):
         # 3. Extract your new tensor 'c' from the environment dictionary
         c = exec_scope['c']
         print(c.shape)
+        self.count += 1
         return c
 
 
@@ -400,7 +405,7 @@ class nnDropout(nn.Module, getsetpanel):
         return self.drop(matrix)
 
 
-# FIX: maybe?
+# TODO: fix maybe?
 class nnLayerNorm(nn.Module, getsetpanel):
     def __init__(self, my_panel_maker):
         control_panel = my_panel_maker.control_panel
@@ -432,7 +437,6 @@ class nnLayerNorm(nn.Module, getsetpanel):
         return self.lay(matrix)
 
 
-# FIX: two inputs?
 class nnSplit(getsetpanel):
     def __init__(self, my_panel_maker):
         control_panel = my_panel_maker.control_panel

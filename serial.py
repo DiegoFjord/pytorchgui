@@ -11,9 +11,10 @@ class nndeserial:
         print("running deserialize")
         my_nnItem: nnItem = self.my_nn_maker.make_nnItem(item_json["type"])
 
-        # FIX: start doesnt run becuase of nnMaker
-        if my_nnItem is None:
-            return None
+        # # FIX: start doesnt run becuase of nnMaker
+        # if my_nnItem is None:
+        #     return None
+        #
 
         panel = my_nnItem.curr.nn_panel
 
