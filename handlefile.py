@@ -11,7 +11,8 @@ class handlefile:
         self.my_nn_maker = my_nn_maker
         self.filename = "savefile.txt"
 
-    # FIX: delete extra start
+    # NOTE: exta start Fine
+    # loads in new file
     def load(self):
         deserializer: nndeserial = nndeserial(self.my_nn_maker)
         with open(self.filename, "r", encoding="utf-8") as f:
