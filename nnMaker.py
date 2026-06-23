@@ -1,5 +1,6 @@
 from control import nnItem
 from items import nnStart, nnGlobals, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril
+from basicItems import basicLinear,  basicMultiply, basicScript, basicSplit, basicTril, basicDropout
 # this is a comment
 # TODO: make this its own file/class
 
@@ -41,3 +42,20 @@ class nnMaker:
             self.controller.itemlist.append(my_nnItem)
 
         return my_nnItem
+
+
+class basicMaker:
+    def __init__(self, device):
+        self.device = device
+
+    def get_basic_item(self, selection, *args):
+        match selection:
+            case "Relu": return basicLinear()
+            case "Multiply": return basicMultiply(args)
+            case "Split": return basicSplit(args)
+            case "Script": return basicScript(args)
+            case "Tril": return basicTril(self.device)
+            case "LayerNorm": return basicTril(self.device)
+            case "Linear": return basicLinear(self.device, args)
+            case "Dropout": return basicDropout(self.device, args)
+            case _: return None

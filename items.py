@@ -2,6 +2,7 @@ import re
 import torch.nn as nn
 import torch
 import torch_directml
+from basicItems import basicDropout, basicLayerNorm, basicLinear, basicMultiply, basicRelu, basicScript, basicSplit, basicTril
 
 
 # global vars
@@ -111,7 +112,6 @@ class nnBatch(getsetpanel):
         self.split = None
         self.setup = True
 
-        self.nn_panel = my_panel_maker.control_panel
         self.nn_panel = my_panel_maker.makebatch()
 
     def parse_data(self, data):
@@ -396,7 +396,7 @@ class nnDropout(nn.Module, getsetpanel):
         self.drop = nn.dropout(self.dropval)
 
     def run(self, matrix):
-        print("running relu")
+        print("running dropout")
         if (self.setup):
             self.get_user_data()
             self.set_user_data()
@@ -427,7 +427,7 @@ class nnLayerNorm(nn.Module, getsetpanel):
         self.lay = nn.LayerNorm(self.dim)
 
     def run(self, matrix):
-        print("running relu")
+        print("running layerNorm")
         if (self.setup):
             self.dim = matrix.size(-1)
             self.get_user_data()
@@ -516,3 +516,63 @@ class nnTril(nn.Module, getsetpanel):
         )
         print(data)
         return data
+
+
+# for the dropdown modify filename on creation
+# TODO:
+class nnCustom(nn.Module, getsetpanel):
+    def __init__(self, my_panel_maker):
+        control_panel = my_panel_maker.control_panel
+        getsetpanel.__init__(self, control_panel)
+        nn.Module.__init__(self)
+
+        self.filename = None
+        self.itemlist = None
+        self.output = None
+        self.setup = True
+
+        # panel data
+        self.control_panel = my_panel_maker.control_panel
+        self.nn_panel = my_panel_maker.maketril()
+
+    def get_user_data(self):
+        with open("lib1.txt", 'r', encoding="utf-8") as f:
+            text = f.read()
+
+    def set_user_data(self):
+        pass
+
+    def run(self, matrix):
+        print("running custom")
+        if (self.setup):
+            self.get_user_data()
+            self.set_user_data()
+            self.setup = False
+
+        return self.output
+
+
+class nnTerminate(nn.Module, getsetpanel):
+    def __init__(self, my_panel_maker):
+        control_panel = my_panel_maker.control_panel
+        getsetpanel.__init__(self, control_panel)
+        nn.Module.__init__(self)
+
+        self.setup = True
+
+        # panel data
+        self.control_panel = my_panel_maker.control_panel
+        self.nn_panel = my_panel_maker.maketril()
+
+    def get_user_data(self):
+        pass
+
+    def set_user_data(self):
+        pass
+
+    def run(self, matrix):
+        print("running terminate")
+        if (self.setup):
+            self.setup = False
+
+        return matrix

@@ -30,9 +30,9 @@ class control:
     def run(self):
         self.treeStart.call("passed")
 
-        for key, value in self.itemset.items():
-            value.curr.setup = True
+        for item in self.itemlist:
+            item.curr.setup = True
 
     def load_vals(self):
-        for key, value in self.itemset.items():
-            value.curr.get_user_data()
+        for item in self. itemlist:
+            item.curr.get_user_data()

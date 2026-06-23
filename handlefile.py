@@ -27,15 +27,15 @@ class handlefile:
         nnGlobals.block_size = globalsdict["block_size"]
         # create items
         jsonlist = json_items["itemlist"]
-        for item in jsonlist:
+
+        itemlist.append(self.controller.treeStart)
+        for item in jsonlist[1:]:
             temp_item = deserializer.deserialize(item)
             itemlist.append(temp_item)
 
-        # first item is the tree start
-        self.controller.treeStart = itemlist[0]
-
         # follows
         followdict = json_items["followdict"]
+        print(followdict)
         for index, listitem in enumerate(itemlist):
             for nn_index in followdict[str(index)]:
                 listitem.nexts.append(itemlist[nn_index])
@@ -50,12 +50,10 @@ class handlefile:
         # add items to list
         # add items to nnitem:index dictionary
 
-        i = 0
-        for key, value in self.controller.itemset.items():
+        for i, value in enumerate(self.controller.itemlist):
             itemlist.append(value)
             indexdict[value] = i
             value.curr.get_user_data()
-            i += 1
 
         # add nexts
         for index, item in enumerate(itemlist):

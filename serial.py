@@ -1,6 +1,35 @@
 # this is a comment
 from control import nnItem
 from items import nnStart, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril, nnDropout
+from basicItems import basicLinear,  basicMultiply, basicScript, basicSplit, basicTril, basicDropout
+
+
+class basicdeserial:
+    def __init__(self, my_nn_maker):
+        self.my_nn_maker = my_nn_maker
+
+    def deserialize(self, item_json):
+        print("running deserialize")
+        my_nnItem: nnItem = self.my_nn_maker.make_nnItem(item_json["type"])
+
+        panel = my_nnItem.curr.nn_panel
+
+        match my_nnItem.nntype:
+            case "Linear":
+                panel.width.set(item_json["width"])
+            case "Multiply":
+                panel.transposea.set(item_json["transposea"])
+                panel.transposeb.set(item_json["transposeb"])
+            case "Script":
+                panel.filename.set(item_json["filename"])
+                panel.prog.set(item_json["prog"])
+            case "Dropout":
+                panel.spinvar.set(item_json["dropout"])
+            case "Split":
+                panel.fraction.set(item_json["fraction"])
+                panel.fraction.set(item_json["block"])
+            case "Tril": pass
+        return my_nnItem
 
 
 class nndeserial:

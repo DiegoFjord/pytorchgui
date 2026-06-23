@@ -35,7 +35,6 @@ class DragDropCanvas:
         item_id = self.my_designer.getbystring(bind.nntype)
         self.controller.itemset[item_id] = bind
         self.set_control_panel(self.controller.itemset, item_id)
-        print(f"made {item_id}")
 
     def get_line_coors(self, x0, y0, x1, y1):
         midx = x0 + (x1 - x0)/2
