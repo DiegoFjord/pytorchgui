@@ -1,13 +1,13 @@
 import tkinter as tk
 # my imports
 from canvas import DragDropCanvas
-from control import control, nnItem
+from control import control
 from tkinter import ttk  # ttk is the modern tk
 from panel_maker import panel_maker
-from items import nnStart
 from screenItems import screenItems
 from handlefile import handlefile
-from nnMaker import nnMaker
+from nnMaker import nnMaker, basicMaker
+from items import nnCustom
 # my imports
 
 
@@ -16,16 +16,21 @@ root = tk.Tk()
 root.title("title")
 root.geometry("750x750")
 
+
 # function handlers
-
-
 def setmouse():
     ddCanvas.state = "Mouse"
 
 
 def make_nnItem(out):
-    selection = item_decl.combo.get()
+    selection = item_decl.combo1.get()
     _ = my_nn_maker.make_nnItem(selection)
+
+
+def make_customItem(out):
+    selection = item_decl.combo2.get()
+    custom: nnCustom = my_nn_maker.make_nnItem("Custom")
+    custom.filename = str(selection) + ".txt"
 
 
 # holds items
@@ -45,7 +50,8 @@ controller.treeStart = my_nn_maker.make_nnItem("Start")
 handler = handlefile(controller, my_nn_maker)
 # create/render items
 item_decl = screenItems(
-    root, controller, handler, ddCanvas, control_panel, setmouse, make_nnItem
+    root, controller, handler, ddCanvas, control_panel, setmouse,
+    make_nnItem, make_customItem
 )
 # grab items
 root.mainloop()

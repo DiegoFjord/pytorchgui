@@ -1,6 +1,6 @@
 from control import nnItem
-from items import nnStart, nnGlobals, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril
-from basicItems import basicLinear,  basicMultiply, basicScript, basicSplit, basicTril, basicDropout
+from items import nnStart, nnGlobals, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril, nnCustom
+from basicItems import basicLinear, basicMultiply, basicScript, basicSplit, basicTril, basicDropout, basicTerminate
 # this is a comment
 # TODO: make this its own file/class
 
@@ -22,6 +22,7 @@ class nnMaker:
             case "Embeddings": return nnEmbedings(pm)
             case "Linear": return nnLinear(pm)
             case "Tril": return nnTril(pm)
+            case "Custom": return nnCustom(pm)
             case _: return None
 
     def make_nnItem(self, selection):
@@ -45,17 +46,16 @@ class nnMaker:
 
 
 class basicMaker:
-    def __init__(self, device):
-        self.device = device
-
-    def get_basic_item(self, selection, *args):
+    def get_basic_item(self, selection):
         match selection:
-            case "Relu": return basicLinear()
-            case "Multiply": return basicMultiply(args)
-            case "Split": return basicSplit(args)
-            case "Script": return basicScript(args)
-            case "Tril": return basicTril(self.device)
-            case "LayerNorm": return basicTril(self.device)
-            case "Linear": return basicLinear(self.device, args)
-            case "Dropout": return basicDropout(self.device, args)
+            # set selection in the constructor
+            case "Relu": return basicLinear(selection)
+            case "Multiply": return basicMultiply(selection)
+            case "Split": return basicSplit(selection)
+            case "Script": return basicScript(selection)
+            case "Tril": return basicTril(selection)
+            case "LayerNorm": return basicTril(selection)
+            case "Linear": return basicLinear(selection)
+            case "Dropout": return basicDropout(selection)
+            case "Terminate": return basicTerminate(selection)
             case _: return None

@@ -1,7 +1,6 @@
 import json
-from control import nnItem
 from serial import nnserial, nndeserial
-from items import nnGlobals, nnStart, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril, nnDropout, nnGlobals
+from items import nnGlobals
 # this is a comment
 
 

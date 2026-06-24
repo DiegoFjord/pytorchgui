@@ -21,6 +21,7 @@ class designer:
             case "Embeddings": cs = canvasNone(self.canvas)
             case "Linear": cs = canvasNone(self.canvas)
             case "Script": cs = canvasNone(self.canvas)
+            case "Custom": cs = canvasNone(self.canvas)
             case _:
                 cs = canvasNone(self.canvas)
                 print("designer: item not found")

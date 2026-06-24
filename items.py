@@ -3,6 +3,8 @@ import torch.nn as nn
 import torch
 import torch_directml
 from basicItems import basicDropout, basicLayerNorm, basicLinear, basicMultiply, basicRelu, basicScript, basicSplit, basicTril
+import json
+from serial import basicdeserial
 
 
 # global vars
@@ -490,7 +492,6 @@ class nnTril(nn.Module, getsetpanel):
         self.setup = True
 
         # panel data
-        self.control_panel = my_panel_maker.control_panel
         self.nn_panel = my_panel_maker.maketril()
 
     def get_user_data(self):
@@ -514,12 +515,13 @@ class nnTril(nn.Module, getsetpanel):
         data = matrix.masked_fill(
             self.tril[:self.dima, :self.dimb] == 0, float('-inf')
         )
-        print(data)
+        print(data.shape)
         return data
 
 
 # for the dropdown modify filename on creation
 # TODO:
+
 class nnCustom(nn.Module, getsetpanel):
     def __init__(self, my_panel_maker):
         control_panel = my_panel_maker.control_panel
@@ -527,20 +529,41 @@ class nnCustom(nn.Module, getsetpanel):
         nn.Module.__init__(self)
 
         self.filename = None
-        self.itemlist = None
+        self.jsonlist = None
+        self.followdict = None
+        self.itemlist = []
+        self.followdict = None
         self.output = None
         self.setup = True
 
         # panel data
-        self.control_panel = my_panel_maker.control_panel
         self.nn_panel = my_panel_maker.maketril()
 
     def get_user_data(self):
-        with open("lib1.txt", 'r', encoding="utf-8") as f:
+        with open("lib1.json", 'r', encoding="utf-8") as f:
             text = f.read()
 
+        json_items = json.loads(text)
+        self.jsonlist = json_items["itemlist"]
+        self.followdict = json_items["followdict"]
+
     def set_user_data(self):
-        pass
+        deserializer = basicdeserial()
+        for item in self.jsonlist:
+            temp_item = deserializer.deserialize(item)
+            self.itemlist.append(temp_item)
+            print(temp_item.typename)
+
+    def callnexts(self, prev, index, itemlist):
+        curr = itemlist[index]
+        if (curr.typename == "Terminate"):
+            self.output = prev
+            return
+
+        out = curr.run(prev)
+        # grab next indeces and call them with out
+        for next_ind in self.followdict[str(index)]:
+            self.callnexts(out, next_ind, itemlist)
 
     def run(self, matrix):
         print("running custom")
@@ -548,6 +571,9 @@ class nnCustom(nn.Module, getsetpanel):
             self.get_user_data()
             self.set_user_data()
             self.setup = False
+
+        self.callnexts(matrix, 0, self.itemlist)
+        print(self.output.shape)
 
         return self.output
 

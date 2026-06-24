@@ -3,16 +3,17 @@ import torch
 
 
 class basicLinear(nn.Module):
-    def __init__(self, device, width):
+    def __init__(self, typename):
         nn.Module.__init__(self)
 
-        self.device = device
+        self.device = None
 
         self.lin1 = None
 
         self.dim = None
-        self.width = width
+        self.width = None
 
+        self. typename = typename
         self.setup = True
 
     def set_user_data(self):
@@ -32,12 +33,13 @@ class basicLinear(nn.Module):
 
 
 class basicMultiply():
-    def __init__(self, transposea, transposeb, a, b):
-        self.transposea = transposea
-        self.transposeb = transposeb
-        self.a = a
-        self.b = b
+    def __init__(self, typename):
+        self.transposea = None
+        self.transposeb = None
+        self.a = None
+        self.b = None
 
+        self. typename = typename
         self.setup = True
 
     def run(self, matrix):
@@ -68,9 +70,11 @@ class basicMultiply():
 
 
 class basicScript():
-    def __init__(self, prog):
-        self.prog = prog
+    def __init__(self, typename):
+        self.prog = None
         self.count = 0
+
+        self. typename = typename
 
     def run(self, matrix):
         print("running script")
@@ -93,10 +97,11 @@ class basicScript():
 
 
 class basicSplit():
-    def __init__(self, fraction, block):
-        self.fraction = fraction
-        self.block = block
+    def __init__(self, typename):
+        self.fraction = None
+        self.block = None
 
+        self. typename = typename
         self.setup = True
 
     def run(self, matrix):
@@ -120,9 +125,11 @@ class basicSplit():
 
 
 class basicRelu(nn.Module):
-    def __init__(self):
+    def __init__(self, typename):
         nn.Module.__init__(self)
         self.relu = nn.Relu()
+
+        self. typename = typename
 
     def run(self, matrix):
         print("running relu")
@@ -130,13 +137,14 @@ class basicRelu(nn.Module):
 
 
 class basicDropout(nn.Module):
-    def __init__(self, device, dropval):
+    def __init__(self, typename):
         nn.Module.__init__(self)
-        self.device = device
+        self.device = None
 
         self.drop = None
-        self.dropval = dropval
+        self.dropval = None
 
+        self. typename = typename
         self.setup = True
 
     def set_user_data(self):
@@ -152,14 +160,15 @@ class basicDropout(nn.Module):
 
 
 class basicLayerNorm(nn.Module):
-    def __init__(self, device):
+    def __init__(self, typename):
         nn.Module.__init__(self)
-        self.device = device
+        self.device = None
 
         self.lay = None
 
         self.dim = None
 
+        self. typename = typename
         self.setup = True
 
     def set_user_data(self):
@@ -177,15 +186,16 @@ class basicLayerNorm(nn.Module):
 
 
 class basicTril(nn.Module):
-    def __init__(self, device):
+    def __init__(self, typename):
         nn.Module.__init__(self)
-        self.device = device
+        self.device = None
 
         # self.tril = None # do not uncomment
         self.dima = None
         self.dimb = None
         self.ones = None
 
+        self. typename = typename
         self.setup = True
 
     def set_user_data(self):
@@ -208,3 +218,8 @@ class basicTril(nn.Module):
         )
         print(data)
         return data
+
+
+class basicTerminate:
+    def __init__(self, typename):
+        self.typename = "Terminate"

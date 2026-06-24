@@ -9,12 +9,15 @@ from items import nnGlobals, nnStart, nnLinear, nnBatch, nnEmbedings, nnMultiply
 
 
 class screenItems:
-    def __init__(self, root, controller, handler, ddCanvas, control_panel, setmouse, update_label):
+    def __init__(self, root, controller, handler, ddCanvas, control_panel, setmouse, make_nnItem, make_customItem):
         # object options
-        options = [
+        options1 = [
             "Linear", "Batch", "Embeddings",
             "Multiply", "Script", "Split", "Line",
             "Tril"
+        ]
+        options2 = [
+            "lib1.json"
         ]
 
         # create objects
@@ -22,7 +25,9 @@ class screenItems:
             root, text="Please make a selection", font=("Arial", 12)
         )
 
-        self.combo = ttk.Combobox(root, values=options, state="readonly")
+        self.combo1 = ttk.Combobox(root, values=options1, state="readonly")
+        self.combo2 = ttk.Combobox(root, values=options2, state="readonly")
+
         start_button = ttk.Button(
             root, text="Start Progress", command=controller.run
         )
@@ -35,11 +40,13 @@ class screenItems:
         control_panel.add(label)
 
         # handle objects
-        self.combo.bind("<<ComboboxSelected>>", update_label)
+        self.combo1.bind("<<ComboboxSelected>>", make_nnItem)
+        self.combo2.bind("<<ComboboxSelected>>", make_customItem)
 
         # render objects
         label2.pack(pady=20)
-        self.combo.pack(pady=5)
+        self.combo1.pack(pady=5)
+        self.combo2.pack(pady=5)
         start_button.pack(pady=10)
         mouse_button.pack(pady=10)
         save_button.pack(pady=5)
