@@ -1,4 +1,5 @@
 import tkinter as tk
+import json
 # my imports
 from canvas import DragDropCanvas
 from control import control
@@ -6,8 +7,9 @@ from tkinter import ttk  # ttk is the modern tk
 from panel_maker import panel_maker
 from screenItems import screenItems
 from handlefile import handlefile
-from nnMaker import nnMaker, basicMaker
+from nnMaker import nnMaker
 from items import nnCustom
+
 # my imports
 
 
@@ -33,8 +35,31 @@ def make_customItem(out):
     custom.filename = str(selection) + ".txt"
 
 
+def checklibjson(jsondata):
+    follow = jsondata["followdict"]
+    itemlist = jsondata["itemlist"]
+    for key, value in follow.items():
+        mynn = itemlist[int(key)]
+        if (len(value) == 0 and mynn["type"] != "Terminate"):
+            return False
+    return True
+
+
+def save_lib():
+    print("running savelib")
+    handler.filename = "lib1.json"
+    jsondata = handler.getjson()
+    if (checklibjson(jsondata)):
+        jsonstring = json.dumps(jsondata)
+        with open(handler.filename, "w", encoding="utf-8") as file:
+            # file.write(jsonstring)
+            print("write lib")
+
+
 # holds items
 controller = control()
+# current loaded file
+curr_file = None
 # holds selected item panel
 control_panel = ttk.PanedWindow(root, orient=tk.HORIZONTAL, height=50)
 # creates item panels
@@ -51,7 +76,7 @@ handler = handlefile(controller, my_nn_maker)
 # create/render items
 item_decl = screenItems(
     root, controller, handler, ddCanvas, control_panel, setmouse,
-    make_nnItem, make_customItem
+    make_nnItem, make_customItem, save_lib
 )
 # grab items
 root.mainloop()

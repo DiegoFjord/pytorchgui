@@ -1,20 +1,16 @@
 import tkinter as tk
 # my imports
-from canvas import DragDropCanvas
-from control import control, nnItem
 from tkinter import ttk  # ttk is the modern tk
-from panel_maker import panel_maker
-from items import nnGlobals, nnStart, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril
 # my imports
 
 
 class screenItems:
-    def __init__(self, root, controller, handler, ddCanvas, control_panel, setmouse, make_nnItem, make_customItem):
+    def __init__(self, root, controller, handler, ddCanvas, control_panel, setmouse, make_nnItem, make_customItem, save_lib):
         # object options
         options1 = [
             "Linear", "Batch", "Embeddings",
             "Multiply", "Script", "Split", "Line",
-            "Tril"
+            "Tril", "Dropout", "Terminate"
         ]
         options2 = [
             "lib1.json"
@@ -35,6 +31,7 @@ class screenItems:
         mouse_button = ttk.Button(root, text="set mouse", command=setmouse)
         save_button = ttk.Button(root, text="save", command=handler.save)
         load_button = ttk.Button(root, text="load", command=handler.load)
+        lib_button = ttk.Button(root, text="lib", command=save_lib)
 
         label = tk.Label(root, text="App")
         control_panel.add(label)
@@ -51,5 +48,6 @@ class screenItems:
         mouse_button.pack(pady=10)
         save_button.pack(pady=5)
         load_button.pack(pady=5)
+        lib_button.pack(pady=5)
         control_panel.pack(fill=tk.Y, expand=False)
         ddCanvas.canvas.pack(fill=tk.BOTH, expand=False)

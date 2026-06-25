@@ -41,6 +41,15 @@ class handlefile:
                 itemlist[nn_index].prevs.append(listitem)
 
     def save(self):
+        jsondata = self.getjson()
+        jsonstring = json.dumps(jsondata)
+
+        with open(self.filename, "w", encoding="utf-8") as file:
+            file.write(jsonstring)
+
+        print("writing json string to file", jsonstring)
+
+    def getjson(self):
         serial = nnserial()
 
         indexdict = {}
@@ -78,9 +87,4 @@ class handlefile:
             "followdict": followdict
         }
 
-        jsonstring = json.dumps(jsondata)
-
-        with open(self.filename, "w", encoding="utf-8") as file:
-            file.write(jsonstring)
-
-        print("writing json string to file", jsonstring)
+        return jsondata
