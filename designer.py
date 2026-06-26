@@ -8,18 +8,21 @@ class designer:
         self.canvas = canvas
         self.shapedict = {}
 
-    def move(self, shape_id, dx, dy):
-        # FIX: id
-        for shape_id in self.shapedict[shape_id].shape_id_arr:
+    def move(self, object_id, dx, dy):
+        for shape_id in self.shapedict[object_id].shape_id_arr:
             self.canvas.move(shape_id, dx, dy)
+
+    def delete(self, object_id):
+        for shape_id in self.shapedict[object_id].shape_id_arr:
+            self.canvas.delete(shape_id)
 
     def getbystring(self, nntype):
         cs = None
         match nntype:
-            case "Start": cs = canvasNone(self.canvas)
+            case "Start": cs = canvasStart(self.canvas)
             case "Batch": cs = canvasNone(self.canvas)
             case "Embeddings": cs = canvasNone(self.canvas)
-            case "Linear": cs = canvasNone(self.canvas)
+            case "Linear": cs = canvasStart(self.canvas)
             case "Script": cs = canvasNone(self.canvas)
             case "Custom": cs = canvasNone(self.canvas)
             case _:

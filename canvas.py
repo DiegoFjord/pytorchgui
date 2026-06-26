@@ -20,7 +20,7 @@ class DragDropCanvas:
         self.canvas.bind("<Button-1>", self.on_press)
         self.canvas.bind("<B1-Motion>", self.on_drag)
         self.canvas.bind("<ButtonRelease-1>", self.on_release)
-
+        self.canvas.bind("<Delete>", self.on_delete)
         # Variables to track mouse position and selected item
         self.state = None  # set to mouse linear...
         self.base_id = None  # the first item selcted(used for line)
@@ -46,35 +46,44 @@ class DragDropCanvas:
         ]
         return parcurve
 
+    def on_delete(self, e):
+        print("deleting")
+        prevlines = self.controller.itemset[self.last].line_nexts
+        nextlines = self.controller.itemset[self.last].line_prevs
+        for line in prevlines:
+            self.canvas.delete(line)
+        for line in nextlines:
+            self.canvas.delete(line)
+
+        if (self.last is not None):
+            self.canvas.delete(self.last)
+            self.my_designer.delete(self.last)
+            self.last = None
+
+        # self.controller.itemset.pop(self.last)
+
     def set_control_panel(self, tempdict, clicked_id):
         if (self.last is not None):
             tempdict[self.last].curr.hide_user_panel()
         tempdict[clicked_id].curr.get_user_panel()
         self.last = clicked_id
 
-    def on_press(self, event):
-        """Detects if an item was pressed."""
-        # Find the item closest to the click coordinates
-        clicked_ids = self.canvas.find_withtag("current")
-
+    def on_press(self, e):
         tempdict = self.controller.itemset
 
-        # fix for overlay objects
-        if clicked_ids:
-            clicked_id = clicked_ids[0]
-            self.start_x = event.x
-            self.start_y = event.y
+        clicked_ids = self.canvas.find_overlapping(
+            e.x, e.y, e.x, e.y
+        )
 
-            if (clicked_id in self.controller.itemset):
+        for clicked_id in clicked_ids:
+            if (clicked_id in tempdict):
+                self.start_x = e.x
+                self.start_y = e.y
+
                 self.set_control_panel(tempdict, clicked_id)
                 self.base_id = clicked_id
                 if (self.state == "Line"):
-                    initial_points = [
-                        event.x, event.y,
-                        event.x, event.y,
-                        event.x, event.y,
-                        event.x, event.y
-                    ]
+                    initial_points = [e.x, e.y, e.x, e.y, e.x, e.y, e.x, e.y]
 
                     item_id = self.canvas.create_line(
                         initial_points, smooth=True, fill="blue", width=3.0
@@ -84,6 +93,8 @@ class DragDropCanvas:
 
                 else:
                     self.selected_id = clicked_ids[0]
+
+                break
 
     def move_end(self, line_id, a, b, c, d):
         curr_coords = self.canvas.coords(line_id)
@@ -149,19 +160,12 @@ class DragDropCanvas:
 
     def attach_line(self, tempdict, base_id,  target_id, selected_id,):
         # line segment attaching to next and previous
-        tempdict[self.base_id].line_nexts.append(
-            self.selected_id
-        )
-        tempdict[target_id].line_prevs.append(
-            self.selected_id)
+        tempdict[base_id].line_nexts.append(selected_id)
+        tempdict[target_id].line_prevs.append(selected_id)
 
         # logical next and previous
-        tempdict[self.base_id].nexts.append(
-            tempdict[target_id]
-        )
-        tempdict[target_id].prevs.append(
-            tempdict[self.base_id]
-        )
+        tempdict[base_id].nexts.append(tempdict[target_id])
+        tempdict[target_id].prevs.append(tempdict[base_id])
 
     def on_release(self, event):
         """Detects when the mouse button is released."""
@@ -171,22 +175,19 @@ class DragDropCanvas:
         clicked_ids = self.canvas.find_overlapping(
             event.x, event.y, event.x, event.y
         )
+        print(clicked_ids)
 
-        if clicked_ids and self.base_id:
-            # id of item found on release
-            for item_id in clicked_ids:
-                if (item_id in tempdict):
-                    target_id = item_id
+        for item_id in clicked_ids:
+            if (item_id in tempdict):
+                target_id = item_id
 
-            # aka is a line
-            if (self.selected_id not in tempdict):
-                # if line has a valid line endpoint
-                if (self.line_target_conditions(tempdict, target_id)):
-                    self.attach_line(
-                        tempdict, self.base_id, target_id, self.selected_id
-                    )
-                else:
-                    self.canvas.delete(self.selected_id)
+        if (self.state == "Line" and self.base_id):
+            if (self.line_target_conditions(tempdict, target_id)):
+                self.attach_line(
+                    tempdict, self.base_id, target_id, self.selected_id
+                )
+            else:
+                self.canvas.delete(self.selected_id)
 
         # reset the selection
         if self.selected_id:

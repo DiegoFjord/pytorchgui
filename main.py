@@ -19,7 +19,12 @@ root.title("title")
 root.geometry("750x750")
 
 
+def set_focus(e):
+    e.widget.focus_set()
+
 # function handlers
+
+
 def setmouse():
     ddCanvas.state = "Mouse"
 
@@ -78,5 +83,7 @@ item_decl = screenItems(
     root, controller, handler, ddCanvas, control_panel, setmouse,
     make_nnItem, make_customItem, save_lib
 )
+
+root.bind('<Button-1>', set_focus)
 # grab items
 root.mainloop()
