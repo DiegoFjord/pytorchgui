@@ -5,10 +5,12 @@ from items import nnGlobals
 
 
 class handlefile:
-    def __init__(self, controller, my_nn_maker):
+    def __init__(self, controller, my_nn_maker, filename):
         self.controller = controller
         self.my_nn_maker = my_nn_maker
-        self.filename = "savefile.txt"
+        self.filename = filename
+        if (filename is not None):
+            self.load()
 
     # NOTE: exta start Fine
     # loads in new file

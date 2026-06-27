@@ -51,3 +51,12 @@ class screenItems:
         lib_button.pack(pady=5)
         control_panel.pack(fill=tk.Y, expand=False)
         ddCanvas.canvas.pack(fill=tk.BOTH, expand=False)
+
+    def make_nnItem(self, out):
+        selection = self.combo1.get()
+        _ = self.my_nn_maker.make_nnItem(selection)
+
+    def make_customItem(self, out):
+        selection = item_decl.combo2.get()
+        custom: nnCustom = my_winInit.my_nn_maker.make_nnItem("Custom")
+        custom.filename = str(selection) + ".txt"
