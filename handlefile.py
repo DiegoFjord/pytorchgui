@@ -46,10 +46,13 @@ class handlefile:
         jsondata = self.getjson()
         jsonstring = json.dumps(jsondata)
 
-        with open(self.filename, "w", encoding="utf-8") as file:
-            file.write(jsonstring)
+        if self.filename:
+            with open(self.filename, "w", encoding="utf-8") as file:
+                file.write(jsonstring)
 
-        print("writing json string to file", jsonstring)
+            print("writing json string to file", jsonstring)
+        else:
+            print("no file found")
 
     def getjson(self):
         serial = nnserial()

@@ -29,7 +29,7 @@ def clear_session():
 
 def load_session():
     # holds items
-    my_winInit = winInit(root)
+    _ = winInit(root)
 
 
 load_session()

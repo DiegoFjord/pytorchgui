@@ -11,19 +11,19 @@ from nnMaker import nnMaker
 
 # this is a comment
 class winInit:
-    def __init__(self, root):
+    def __init__(self, root, filename=None):
         self.root = root
 
         self.winframe = tk.Frame(root)
         self.winframe.pack(fill="both", expand=True)
 
-        self.initApp(self.winframe)
+        self.initApp(self.winframe, filename)
         self.tkinterObjects(self.winframe)
         self.renderwin()
 
-    def reset(self):
+    def reset(self, filename=None):
         self.winframe.destroy()
-        self.__init__(self.root)
+        self.__init__(self.root, filename)
 
     def initApp(self, winframe, filename=None):
         # holds items
@@ -72,8 +72,10 @@ class winInit:
             winframe, text="set mouse", command=self.setmouse)
         self.save_button = ttk.Button(
             winframe, text="save", command=self.save)
+        self.save_entry = tk.Entry(winframe)
         self.load_button = ttk.Button(
             winframe, text="load", command=self.load)
+        self.load_entry = tk.Entry(winframe)
         self.reset_button = ttk.Button(
             winframe, text="reset", command=self.reset)
 
@@ -92,7 +94,9 @@ class winInit:
         self.start_button.pack(pady=10)
         self.mouse_button.pack(pady=10)
         self.save_button.pack(pady=5)
+        self.save_entry.pack(pady=5)
         self.load_button.pack(pady=5)
+        self.load_entry.pack(pady=5)
         self.reset_button.pack(pady=5)
         self.control_panel.pack(fill=tk.Y, expand=False)
         self.ddCanvas.canvas.pack(fill=tk.BOTH, expand=False)
@@ -101,11 +105,11 @@ class winInit:
         self.ddCanvas.state = "Mouse"
 
     def save(self):
+        self.handler.filename = self.save_entry.get()
         self.handler.save()
 
     def load(self):
-        self.reset()
-        self.handler.load()
+        self.reset(self.load_entry.get())
 
     def make_nnItem(self, out):
         selection = self.combo1.get()
@@ -122,7 +126,7 @@ class winInit:
 
     def make_customItem(self, out):
         selection = self.combo2.get()
-        filename = str(selection) + ".txt"
+        filename = str(selection) + ".json"
         #
         with open(filename, "r", encoding="utf-8") as f:
             text = f.read()
@@ -134,5 +138,3 @@ class winInit:
             custom.filename = filename
         else:
             print("not valid input")
-
-        #
