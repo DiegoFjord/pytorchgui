@@ -1,6 +1,6 @@
 from control import nnItem
 from items import nnStart, nnGlobals, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril, nnCustom, nnTerminate
-from basicItems import basicLinear, basicMultiply, basicScript, basicSplit, basicTril, basicDropout, basicTerminate
+from basicItems import basicLinear, basicMultiply, basicScript, basicSplit, basicTril, basicDropout, basicTerminate, basicStart
 # this is a comment
 # TODO: make this its own file/class
 
@@ -50,6 +50,7 @@ class basicMaker:
     def get_basic_item(self, selection):
         match selection:
             # set selection in the constructor
+            case "Relu": return basicStart(selection)
             case "Relu": return basicLinear(selection)
             case "Multiply": return basicMultiply(selection)
             case "Split": return basicSplit(selection)

@@ -529,6 +529,7 @@ class nnCustom(nn.Module, getsetpanel):
         nn.Module.__init__(self)
 
         self.filename = None
+        self.a = None
         self.jsonlist = None
         self.followdict = None
         self.itemlist = []
@@ -540,7 +541,7 @@ class nnCustom(nn.Module, getsetpanel):
         self.nn_panel = my_panel_maker.maketril()
 
     def get_user_data(self):
-        with open("lib1.json", 'r', encoding="utf-8") as f:
+        with open(self.filename + ".json", 'r', encoding="utf-8") as f:
             text = f.read()
 
         json_items = json.loads(text)
@@ -549,7 +550,10 @@ class nnCustom(nn.Module, getsetpanel):
 
     def set_user_data(self):
         deserializer = basicdeserial()
-        for item in self.jsonlist:
+
+        # FIX: dont use [1:]
+        for item in self.jsonlist[1:]:
+            print(item)
             temp_item = deserializer.deserialize(item)
             self.itemlist.append(temp_item)
             print(temp_item.typename)

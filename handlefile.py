@@ -16,7 +16,7 @@ class handlefile:
     # loads in new file
     def load(self):
         deserializer: nndeserial = nndeserial(self.my_nn_maker)
-        with open(self.filename, "r", encoding="utf-8") as f:
+        with open(self.filename + ".json", "r", encoding="utf-8") as f:
             text = f.read()
 
         json_items = json.loads(text)
@@ -47,7 +47,7 @@ class handlefile:
         jsonstring = json.dumps(jsondata)
 
         if self.filename:
-            with open(self.filename, "w", encoding="utf-8") as file:
+            with open(self.filename + ".json", "w", encoding="utf-8") as file:
                 file.write(jsonstring)
 
             print("writing json string to file", jsonstring)

@@ -11,8 +11,10 @@ from nnMaker import nnMaker
 
 # this is a comment
 class winInit:
-    def __init__(self, root, filename=None):
+    def __init__(self, root, state, filename=None):
         self.root = root
+        self.state = state
+        # self.state = state
 
         self.winframe = tk.Frame(root)
         self.winframe.pack(fill="both", expand=True)
@@ -21,9 +23,14 @@ class winInit:
         self.tkinterObjects(self.winframe)
         self.renderwin()
 
+    def __del__(self):
+        with open("App.json", 'w', encoding="utf-8") as f:
+            jsonstring = json.dumps(self.state)
+            f.write(jsonstring)
+
     def reset(self, filename=None):
         self.winframe.destroy()
-        self.__init__(self.root, filename)
+        self.__init__(self.root, self.state, filename)
 
     def initApp(self, winframe, filename=None):
         # holds items
@@ -52,10 +59,7 @@ class winInit:
             "Multiply", "Script", "Split", "Line",
             "Tril", "Dropout", "Terminate"
         ]
-        options2 = [
-            "lib1.json"
-        ]
-
+        options2 = self.state["libs"]
         # create objects
         self.label2 = tk.Label(
             winframe, text="Please make a selection", font=("Arial", 12)
@@ -63,6 +67,9 @@ class winInit:
 
         self.combo1 = ttk.Combobox(winframe, values=options1, state="readonly")
         self.combo2 = ttk.Combobox(winframe, values=options2, state="readonly")
+        self.load_custom_button = ttk.Button(
+            winframe, text="load custom", command=self.load_custom)
+        self.custom_entry = tk.Entry(winframe)
 
         self.start_button = ttk.Button(
             winframe, text="Start Progress", command=self.controller.run
@@ -91,6 +98,8 @@ class winInit:
         self.label2.pack(pady=20)
         self.combo1.pack(pady=5)
         self.combo2.pack(pady=5)
+        self.load_custom_button.pack(pady=5)
+        self.custom_entry.pack(pady=5)
         self.start_button.pack(pady=10)
         self.mouse_button.pack(pady=10)
         self.save_button.pack(pady=5)
@@ -115,7 +124,14 @@ class winInit:
         selection = self.combo1.get()
         _ = self.my_nn_maker.make_nnItem(selection)
 
-    def checklibjson(jsondata):
+    def load_custom(self):
+        customname = self.custom_entry.get()
+        opts = list(self.combo2['values'])
+        opts.append(customname)
+        self.combo2['values'] = opts
+        self.state["libs"].append(customname)
+
+    def checklibjson(self, jsondata):
         follow = jsondata["followdict"]
         itemlist = jsondata["itemlist"]
         for key, value in follow.items():
@@ -125,16 +141,18 @@ class winInit:
         return True
 
     def make_customItem(self, out):
+        print("making custom")
         selection = self.combo2.get()
-        filename = str(selection) + ".json"
+        filename = selection
         #
-        with open(filename, "r", encoding="utf-8") as f:
+        with open(filename + ".json", "r", encoding="utf-8") as f:
             text = f.read()
 
         jsondata = json.loads(text)
 
         if (self.checklibjson(jsondata)):
             custom = self.my_nn_maker.make_nnItem("Custom")
-            custom.filename = filename
+            custom.curr.filename = filename
+            print("custom filename: ", custom.curr.filename)
         else:
             print("not valid input")

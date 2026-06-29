@@ -13,6 +13,7 @@ class basicdeserial:
         print("typeback", type(my_basicItem))
 
         match my_basicItem.typename:
+            case "Start": pass
             case "Linear":
                 my_basicItem.width = item_json["width"]
             case "Multiply":
@@ -61,6 +62,8 @@ class nndeserial:
             case "Split":
                 panel.fraction.set(item_json["fraction"])
                 panel.fraction.set(item_json["block"])
+            case "Custom":
+                panel.filename = item_json["filename"]
             case "Tril": pass
         return my_nnItem
 
@@ -80,6 +83,7 @@ class nnserial:
             case "Multiply": retdict = {"transposea": item.transposea, "transposeb": item.transposeb}
             case "Script": retdict = {"filename": item.exec_file, "prog": item.prog}
             case "Dropout": retdict = {"dropout": item.drop}
+            case "Custom": retdict = {"filename": item.filename}
             case "Split": retdict = {"fraction": item.fraction, "block": item.block}
             case "Tril": retdict = {"type": my_nnItem.nntype}
 

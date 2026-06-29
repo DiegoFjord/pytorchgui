@@ -2,6 +2,14 @@ import torch.nn as nn
 import torch
 
 
+class basicStart(nn.Module):
+    def __init__(self, typename):
+        self. typename = typename
+
+    def run(self, matrix):
+        return matrix
+
+
 class basicLinear(nn.Module):
     def __init__(self, typename):
         nn.Module.__init__(self)

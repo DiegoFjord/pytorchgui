@@ -1,9 +1,6 @@
-import tkinter as tk
 import json
+import tkinter as tk
 # my imports
-from control import control
-from items import nnCustom
-from screenItems import screenItems
 from winInit import winInit
 
 # my imports
@@ -15,21 +12,26 @@ root.title("title")
 root.geometry("750x750")
 
 
+# class appState:
+#     def __init__(self):
+#         loadedlibs = []
+#
+
 def set_focus(e):
     e.widget.focus_set()
 
+
+def load_appstate():
+    with open("App.json", 'r', encoding="utf-8") as f:
+        text = f.read()
+    return json.loads(text)
+
+
 # function handlers
-
-
-def clear_session():
-    # Loop through all widgets inside the root window
-    for widget in root.winfo_children():
-        widget.destroy()
-
-
 def load_session():
     # holds items
-    _ = winInit(root)
+    state = load_appstate()
+    winInit(root, state)
 
 
 load_session()
