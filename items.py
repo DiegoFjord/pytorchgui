@@ -24,10 +24,10 @@ class getsetpanel:
         self.nn_panel = None
 
     def get_user_panel(self):
-        self.control_panel.add(self.nn_panel.panel)
+        self.nn_panel.panel.pack()
 
     def hide_user_panel(self):
-        self.control_panel.forget(self.nn_panel.panel)
+        self.nn_panel.panel.pack_forget()
 
 
 class nnStart(getsetpanel):

@@ -19,9 +19,9 @@ class designer:
     def getbystring(self, nntype):
         cs = None
         match nntype:
-            case "Start": cs = canvasStart(self.canvas)
-            case "Batch": cs = canvasNone(self.canvas)
-            case "Embeddings": cs = canvasNone(self.canvas)
+            case "Start": cs = canvasLin(self.canvas)
+            case "Batch": cs = canvasBatch(self.canvas)
+            case "Embeddings": cs = canvasEmbs(self.canvas)
             case "Linear": cs = canvasStart(self.canvas)
             case "Script": cs = canvasNone(self.canvas)
             case "Custom": cs = canvasNone(self.canvas)
@@ -32,23 +32,61 @@ class designer:
         return cs.head_id
 
 
-class canvasBatch:
+class canvasHead:
     def __init__(self, canvas: tk.Canvas):
         self.head_id = canvas.create_rectangle(
             0, 0, 100, 100,
-            fill="red",
+            fill="light blue",
             outline=""
         )
+
+
+class canvasLin(canvasHead):
+    def __init__(self, canvas: tk.Canvas):
+        canvasHead.__init__(self, canvas)
         self.shape_id_arr = []
 
+        shape_id = canvas.create_rectangle(
+            2, 2, 19.6, 98, fill="orange", outline="")
+        self.shape_id_arr.append(shape_id)
 
-class canvasStart:
+
+class canvasEmbs(canvasHead):
     def __init__(self, canvas: tk.Canvas):
-        self.head_id = canvas.create_rectangle(
-            0, 0, 100, 100,
-            fill="pink",
-            outline=""
-        )
+        canvasHead.__init__(self, canvas)
+        self.shape_id_arr = []
+
+        shape_id = canvas.create_rectangle(
+            2, 2, 19.6, 98, fill="orange", outline="")
+        self.shape_id_arr.append(shape_id)
+
+        for a in range(0, 4):
+            for b in range(0, 5):
+                x = a * 19.6 + 21.6
+                y = b * 19.6 + 2
+                shape_id = canvas.create_rectangle(
+                    x, y, x+17.6, y+17.6, fill="orange", outline="")
+                self.shape_id_arr.append(shape_id)
+
+
+class canvasBatch(canvasHead):
+    def __init__(self, canvas: tk.Canvas):
+        canvasHead.__init__(self, canvas)
+        self.shape_id_arr = []
+
+        for a in range(0, 4):
+            x = 5
+            y = a * 22.5 + 3
+            shape_id = canvas.create_rectangle(
+                x, y + 5, x+90, y+22, fill="dark blue", outline=""
+            )
+            self.shape_id_arr.append(shape_id)
+
+
+class canvasStart(canvasHead):
+    def __init__(self, canvas: tk.Canvas):
+        canvasHead.__init__(self, canvas)
+
         self.shape_id_arr = []
 
         for a in range(0, 6):
@@ -61,11 +99,6 @@ class canvasStart:
                 self.shape_id_arr.append(shape_id)
 
 
-class canvasNone:
+class canvasNone(canvasHead):
     def __init__(self, canvas: tk.Canvas):
-        self.head_id = canvas.create_rectangle(
-            0, 0, 100, 100,
-            fill="red",
-            outline=""
-        )
         self.shape_id_arr = []
