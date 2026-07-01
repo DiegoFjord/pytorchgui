@@ -1,5 +1,5 @@
 from control import nnItem
-from items import nnStart, nnGlobals, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril, nnCustom, nnTerminate
+from items import nnStart, nnGlobals, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril, nnCustom, nnTerminate, nnDropout, nnRelu, nnLayerNorm
 from basicItems import basicLinear, basicMultiply, basicScript, basicSplit, basicTril, basicDropout, basicTerminate, basicStart
 # this is a comment
 # TODO: make this its own file/class
@@ -24,6 +24,9 @@ class nnMaker:
             case "Tril": return nnTril(pm)
             case "Custom": return nnCustom(pm)
             case "Terminate": return nnTerminate(pm)
+            case "Dropout": return nnDropout(pm)
+            case "Relu": return nnDropout(pm)
+            case "LayerNorm": return nnDropout(pm)
             case _: return None
 
     def make_nnItem(self, selection):

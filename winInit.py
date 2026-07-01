@@ -60,7 +60,8 @@ class winInit:
         options1 = [
             "Linear", "Batch", "Embeddings",
             "Multiply", "Script", "Split", "Line",
-            "Tril", "Dropout", "Terminate"
+            "Tril", "Dropout", "Terminate", "Dropout",
+            "LayerNorm", "Relu"
         ]
         options2 = self.state["libs"]
         options3 = ["a", "b", "c"]
@@ -145,7 +146,7 @@ class winInit:
         # frame b
 
         # frame c
-        self.ddCanvas.canvas.pack()
+        self.ddCanvas.canvas.pack(fill=tk.BOTH, expand=False)
 
     def setmouse(self):
         self.ddCanvas.state = "Mouse"

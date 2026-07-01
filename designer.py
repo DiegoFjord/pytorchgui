@@ -19,12 +19,19 @@ class designer:
     def getbystring(self, nntype):
         cs = None
         match nntype:
-            case "Start": cs = canvasCustom(self.canvas)
+            case "Start": cs = canvasStart(self.canvas)
             case "Batch": cs = canvasBatch(self.canvas)
+            case "Multiply": cs = canvasMultiply(self.canvas)
+            case "Split": cs = canvasSplit(self.canvas)
+            case "Script": cs = canvasScript(self.canvas)
             case "Embeddings": cs = canvasEmbs(self.canvas)
             case "Linear": cs = canvasLin(self.canvas)
-            case "Script": cs = canvasNone(self.canvas)
+            case "Tril": cs = canvasTril(self.canvas)
             case "Custom": cs = canvasCustom(self.canvas)
+            case "Terminate": cs = canvasTerminate(self.canvas)
+            case "Dropout": cs = canvasNone(self.canvas)
+            case "Relu": cs = canvasNone(self.canvas)
+            case "LayerNorm": cs = canvasNone(self.canvas)
             case _:
                 cs = canvasNone(self.canvas)
                 print("designer: item not found")
@@ -42,6 +49,100 @@ class canvasHead:
 
 
 class canvasCustom(canvasHead):
+    def __init__(self, canvas: tk.Canvas):
+        canvasHead.__init__(self, canvas)
+        self.shape_id_arr = []
+
+        poly_id = canvas.create_rectangle(
+            4, 4, 48, 48, fill="blue", outline="")
+        self.shape_id_arr.append(poly_id)
+
+        poly_id = canvas.create_rectangle(
+            52, 4, 96, 48, fill="white", outline="")
+        self.shape_id_arr.append(poly_id)
+
+        poly_id = canvas.create_oval(
+            4, 52, 48, 96, fill="black", outline="")
+        self.shape_id_arr.append(poly_id)
+
+        poly_id = canvas.create_oval(
+            52, 52, 96, 96, fill="spring green2", outline="")
+        self.shape_id_arr.append(poly_id)
+
+
+class canvasSplit(canvasHead):
+    def __init__(self, canvas: tk.Canvas):
+        canvasHead.__init__(self, canvas)
+        self.shape_id_arr = []
+
+        poly_id = canvas.create_rectangle(
+            4, 4, 96, 96, fill="light blue", width=4, outline="yellow")
+        self.shape_id_arr.append(poly_id)
+
+        shape_id = canvas.create_rectangle(
+            8, 8, 92, 27.5, fill="yellow", outline=""
+        )
+        self.shape_id_arr.append(shape_id)
+
+        for a in range(1, 4):
+            x = 10
+            y = a * 21.5 + 10
+            shape_id = canvas.create_rectangle(
+                x, y, x+80, y+15.5, fill="light blue", width=4, outline="yellow"
+            )
+            self.shape_id_arr.append(shape_id)
+
+
+class canvasTerminate(canvasHead):
+    def __init__(self, canvas: tk.Canvas):
+        canvasHead.__init__(self, canvas)
+        self.shape_id_arr = []
+
+        poly_id = canvas.create_oval(
+            50, 26, 98, 72, fill="red", outline="")
+        self.shape_id_arr.append(poly_id)
+
+        poly_id = canvas.create_rectangle(
+            2, 40, 75, 60, fill="red", outline="")
+        self.shape_id_arr.append(poly_id)
+
+
+class canvasTril(canvasHead):
+    def __init__(self, canvas: tk.Canvas):
+        canvasHead.__init__(self, canvas)
+        self.shape_id_arr = []
+
+        for i in range(0, 5):
+            for j in range(0, 5):
+                x = i * 19.6 + 2
+                y = j * 19.6 + 2
+
+                if j - i >= 0:
+                    color = "white"
+                else:
+                    color = "black"
+
+                poly_id = canvas.create_rectangle(
+                    x, y, x + 17.6, y + 17.6, fill=color, outline="")
+
+                self.shape_id_arr.append(poly_id)
+
+
+class canvasMultiply(canvasHead):
+    def __init__(self, canvas: tk.Canvas):
+        canvasHead.__init__(self, canvas)
+        self.shape_id_arr = []
+
+        poly_id = canvas.create_oval(
+            2, 2, 98, 98, fill="red", outline="")
+        self.shape_id_arr.append(poly_id)
+
+        poly_id = canvas.create_rectangle(
+            2, 2, 50, 98, fill="red", outline="")
+        self.shape_id_arr.append(poly_id)
+
+
+class canvasScript(canvasHead):
     def __init__(self, canvas: tk.Canvas):
         canvasHead.__init__(self, canvas)
         self.shape_id_arr = []
@@ -121,11 +222,13 @@ class canvasStart(canvasHead):
                 x = a * 16 + 5
                 y = b * 16 + 5
                 shape_id = canvas.create_oval(
-                    x, y, x+10, y+10, fill="orange", outline=""
+                    x, y, x+10, y+10, fill="yellow", outline=""
                 )
                 self.shape_id_arr.append(shape_id)
 
 
 class canvasNone(canvasHead):
     def __init__(self, canvas: tk.Canvas):
+        canvasHead.__init__(self, canvas)
+
         self.shape_id_arr = []
