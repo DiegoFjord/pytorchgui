@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk  # ttk is the modern tk
+import customtkinter as ctk
+from styleConf import radio_conf
 # inputs is defined as an array
 
 
@@ -13,15 +15,20 @@ class panel_maker:
     # embedding size
     # training data size
     def makestart(self):
-        panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
+        panel = tk.PanedWindow(
+            self.control_panel, orient=tk.HORIZONTAL, background="#2c2c2c")
         ex = tk.IntVar(value=1)
         filename = tk.StringVar()
 
         label = tk.Label(panel, text="start menu")
-        test = tk.Radiobutton(panel, text="test", variable=ex, value=1)
-        run = tk.Radiobutton(panel, text="run", variable=ex, value=2)
-        custom = tk.Radiobutton(panel, text="custom", variable=ex, value=3)
+        test = ctk.CTkRadioButton(panel, text="test", variable=ex, value=1)
+        run = ctk.CTkRadioButton(panel, text="run", variable=ex, value=2)
+        custom = ctk.CTkRadioButton(panel, text="custom", variable=ex, value=3)
         entry = tk.Entry(panel, textvariable=filename)
+
+        radio_conf(test)
+        radio_conf(run)
+        radio_conf(custom)
 
         panel.add(label)
         panel.add(test)

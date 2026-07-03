@@ -1,4 +1,5 @@
 import tkinter as tk
+import customtkinter as ctk
 import json
 # my imports
 from canvas import DragDropCanvas
@@ -7,6 +8,7 @@ from tkinter import ttk  # ttk is the modern tk
 from panel_maker import panel_maker
 from handlefile import handlefile
 from nnMaker import nnMaker
+from styleConf import button_conf
 
 
 # this is a comment
@@ -15,15 +17,16 @@ class winInit:
         self.root = root
         self.state = state
         self.toggle = True
+        self.color = "#2c2c2c"
         # self.state = state
 
-        self.winframe = tk.Frame(root)
+        self.winframe = tk.Frame(root, bg="#2c2c2c")
         self.winframe.pack(fill="both", expand=True)
         winframe = self.winframe
 
-        framea = tk.Frame(winframe)
-        frameb = tk.Frame(winframe)
-        framec = tk.Frame(winframe)
+        framea = tk.Frame(winframe, bg=self.color)
+        frameb = tk.Frame(winframe, bg=self.color)
+        framec = tk.Frame(winframe, bg=self.color)
 
         self.initApp(frameb, framec, filename)
         self.tkinterObjects(framea)
@@ -44,7 +47,7 @@ class winInit:
         # creates item panels
         my_panel_maker = panel_maker(frameb)
         # ddCanvas
-        self.canvas = tk.Canvas(framec, width=400, height=400, bg="white")
+        self.canvas = tk.Canvas(framec, width=400, height=400, bg="#393939")
         self.ddCanvas = DragDropCanvas(self.canvas, self.controller)
         # creates items
         self.my_nn_maker = nnMaker(
@@ -70,8 +73,8 @@ class winInit:
         appLabel.pack()
 
         # combo boxes
-        combo_frame = tk.Frame(framea)
-        combo_frame.pack(fill="both", expand=True)
+        combo_frame = tk.Frame(framea, bg=self.color)
+        combo_frame.pack(fill="x", expand=False)
 
         self.nn_combo = ttk.Combobox(
             combo_frame, values=options1, state="readonly")
@@ -79,23 +82,32 @@ class winInit:
             combo_frame, values=options2, state="readonly")
 
         # control buttons
-        button_frame = tk.Frame(framea)
-        button_frame.pack(fill="both", expand=True)
+        button_frame = tk.Frame(framea, bg=self.color)
+        button_frame.pack(fill="x", expand=False)
 
-        self.start_button = ttk.Button(
-            button_frame, text="Run", command=self.controller.run)
+        border_color = "#3d3d3d"
+        fg_color = "#2c2c2c"
+        hover_color = "#2d2d2d"
 
-        self.mouse_button = ttk.Button(
-            button_frame, text="Drag", command=self.setmouse)
+        self.start_button = ctk.CTkButton(
+            master=button_frame, text="Run", command=self.controller.run)
 
-        self.reset_button = ttk.Button(
-            button_frame, text="reset", command=self.reset)
+        self.mouse_button = ctk.CTkButton(
+            master=button_frame, text="Drag", command=self.setmouse)
 
-        self.files_button = ttk.Button(
-            button_frame, text="file", command=self.file_objs)
+        self.reset_button = ctk.CTkButton(
+            master=button_frame, text="Reset", command=self.reset)
+
+        self.files_button = ctk.CTkButton(
+            master=button_frame, text="File", command=self.file_objs)
+
+        button_conf(self.start_button)
+        button_conf(self.mouse_button)
+        button_conf(self.reset_button)
+        button_conf(self.files_button)
 
         # file drops
-        self.file_frame = tk.Frame(framea)
+        self.file_frame = tk.Frame(framea, bg=self.color)
         file_frame = self.file_frame
 
         self.save_as_button = ttk.Button(
@@ -123,18 +135,18 @@ class winInit:
 
     def renderwin(self, framea, frameb, framec):
         # render objects
-        framea.pack(fill="both", expand=True)
-        frameb.pack(fill="both", expand=True)
+        framea.pack(fill="both", expand=False, padx=2, pady=2)
+        frameb.pack(fill="both", expand=False)
         framec.pack(fill="both", expand=True)
 
         # frame a
         self.nn_combo.grid(row=0, column=0)
         self.custom_combo.grid(row=0, column=1)
 
-        self.start_button.grid(row=0, column=0)
-        self.mouse_button.grid(row=0, column=1)
-        self.reset_button.grid(row=0, column=2)
-        self.files_button.grid(row=0, column=3)
+        self.start_button.grid(row=0, column=0, padx=2, pady=2)
+        self.mouse_button.grid(row=0, column=1, padx=2, pady=2)
+        self.reset_button.grid(row=0, column=2, padx=2, pady=2)
+        self.files_button.grid(row=0, column=3, padx=2, pady=2)
 
         self.save_as_button.grid(row=0, column=0)
         self.save_entry.grid(row=0, column=1)
@@ -146,7 +158,7 @@ class winInit:
         # frame b
 
         # frame c
-        self.ddCanvas.canvas.pack(fill=tk.BOTH, expand=False)
+        self.ddCanvas.canvas.pack(fill=tk.BOTH, expand=True)
 
     def setmouse(self):
         self.ddCanvas.state = "Mouse"

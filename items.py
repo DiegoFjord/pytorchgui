@@ -395,7 +395,7 @@ class nnDropout(nn.Module, getsetpanel):
         self.dropval = self.nn_panel.spinvar.get()
 
     def set_user_data(self):
-        self.drop = nn.dropout(self.dropval)
+        self.drop = nn.dropout(self.dropval).to(nnGlobals.device)
 
     def run(self, matrix):
         print("running dropout")
@@ -582,11 +582,10 @@ class nnCustom(nn.Module, getsetpanel):
         return self.output
 
 
-class nnTerminate(nn.Module, getsetpanel):
+class nnTerminate(getsetpanel):
     def __init__(self, my_panel_maker):
         control_panel = my_panel_maker.control_panel
         getsetpanel.__init__(self, control_panel)
-        nn.Module.__init__(self)
 
         self.setup = True
 

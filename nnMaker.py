@@ -37,7 +37,7 @@ class nnMaker:
 
         nn_item = self.get_nn_item(selection)
 
-        if selection in {"Embeddings", "Linear", "Tril"}:
+        if selection in {"Embeddings", "Linear", "Tril", "Relu", "LayerNorm", "Dropout"}:
             nn_item.to(nnGlobals.device)
 
         my_nnItem = None
