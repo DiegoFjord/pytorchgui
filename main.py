@@ -9,13 +9,8 @@ from winInit import winInit
 # root
 root = tk.Tk()
 root.title("title")
-root.geometry("750x750")
+root.geometry("1000x750")
 
-
-# class appState:
-#     def __init__(self):
-#         loadedlibs = []
-#
 
 def set_focus(e):
     e.widget.focus_set()

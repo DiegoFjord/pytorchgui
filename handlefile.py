@@ -42,6 +42,10 @@ class handlefile:
                 listitem.nexts.append(itemlist[nn_index])
                 itemlist[nn_index].prevs.append(listitem)
 
+                line_id = self.my_nn_maker.ddCanvas.get_line()
+                listitem.line_nexts.append(line_id)
+                itemlist[nn_index].line_prevs.append(line_id)
+
     def save(self):
         jsondata = self.getjson()
         jsonstring = json.dumps(jsondata)

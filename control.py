@@ -4,7 +4,7 @@ class nnItem:
         self.nntype = nnType
         self.curr = curr
         self.nexts = []
-        self.prevs = []  # could make into static number?
+        self.prevs = []
 
         # TODO: make into a dictionary and place in canvas
         # item: line_id

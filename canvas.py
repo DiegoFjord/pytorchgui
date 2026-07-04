@@ -48,8 +48,11 @@ class DragDropCanvas:
 
     def on_delete(self, e):
         print("deleting")
-        prevlines = self.controller.itemset[self.last].line_nexts
-        nextlines = self.controller.itemset[self.last].line_prevs
+
+        tempItem = self.controller.itemset[self.last]
+        tempItem.curr.hide_user_panel()
+        prevlines = tempItem.line_nexts
+        nextlines = tempItem.line_prevs
         for line in prevlines:
             self.canvas.delete(line)
         for line in nextlines:
@@ -158,8 +161,14 @@ class DragDropCanvas:
 
         return True
 
-    def attach_line(self, tempdict, base_id,  target_id, selected_id,):
+    def get_line(self):
+        initial_points = [100, 50, 50, 50, 50, 50, 0, 50]
+        return self.canvas.create_line(initial_points, smooth=True, fill="blue", width=3.0)
+
+    def attach_line(self, base_id,  target_id, selected_id,):
         # line segment attaching to next and previous
+
+        tempdict = self.controller.itemset
         tempdict[base_id].line_nexts.append(selected_id)
         tempdict[target_id].line_prevs.append(selected_id)
 
@@ -184,7 +193,7 @@ class DragDropCanvas:
         if (self.state == "Line" and self.base_id):
             if (self.line_target_conditions(tempdict, target_id)):
                 self.attach_line(
-                    tempdict, self.base_id, target_id, self.selected_id
+                    self.base_id, target_id, self.selected_id
                 )
             else:
                 self.canvas.delete(self.selected_id)

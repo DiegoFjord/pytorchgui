@@ -110,17 +110,21 @@ class winInit:
         self.file_frame = tk.Frame(framea, bg=self.color)
         file_frame = self.file_frame
 
-        self.save_as_button = ttk.Button(
+        self.save_as_button = ctk.CTkButton(
             file_frame, text="save to", command=self.save_as)
         self.save_entry = tk.Entry(file_frame)
 
-        self.load_button = ttk.Button(
+        self.load_button = ctk.CTkButton(
             file_frame, text="load file", command=self.load)
         self.load_entry = tk.Entry(file_frame)
 
-        self.load_custom_button = ttk.Button(
+        self.load_custom_button = ctk.CTkButton(
             file_frame, text="add lib", command=self.load_custom)
         self.custom_entry = tk.Entry(file_frame)
+
+        button_conf(self.save_as_button)
+        button_conf(self.load_button)
+        button_conf(self.load_custom_button)
 
         # handle objects
         self.nn_combo.bind("<<ComboboxSelected>>", self.make_nnItem)
@@ -140,20 +144,20 @@ class winInit:
         framec.pack(fill="both", expand=True)
 
         # frame a
-        self.nn_combo.grid(row=0, column=0)
-        self.custom_combo.grid(row=0, column=1)
+        self.nn_combo.grid(row=0, column=0, padx=2, pady=2)
+        self.custom_combo.grid(row=0, column=1, padx=2, pady=2)
 
         self.start_button.grid(row=0, column=0, padx=2, pady=2)
         self.mouse_button.grid(row=0, column=1, padx=2, pady=2)
         self.reset_button.grid(row=0, column=2, padx=2, pady=2)
         self.files_button.grid(row=0, column=3, padx=2, pady=2)
 
-        self.save_as_button.grid(row=0, column=0)
-        self.save_entry.grid(row=0, column=1)
-        self.load_button.grid(row=1, column=0)
-        self.load_entry.grid(row=1, column=1)
-        self.load_custom_button.grid(row=2, column=0)
-        self.custom_entry.grid(row=2, column=1)
+        self.save_as_button.grid(row=0, column=0, padx=2, pady=2)
+        self.save_entry.grid(row=0, column=1, padx=2, pady=2)
+        self.load_button.grid(row=1, column=0, padx=2, pady=2)
+        self.load_entry.grid(row=1, column=1, padx=2, pady=2)
+        self.load_custom_button.grid(row=2, column=0, padx=2, pady=2)
+        self.custom_entry.grid(row=2, column=1, padx=2, pady=2)
 
         # frame b
 

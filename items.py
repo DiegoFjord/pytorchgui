@@ -347,10 +347,10 @@ class nnScript(getsetpanel):
         exec(self.prog, exec_scope)
 
         # 3. Extract your new tensor 'c' from the environment dictionary
-        c = exec_scope['c']
-        print(c.shape)
+        out = exec_scope['c']
+        print(out.shape)
         self.count += 1
-        return c
+        return out
 
 
 class nnRelu(nn.Module, getsetpanel):
@@ -407,7 +407,6 @@ class nnDropout(nn.Module, getsetpanel):
         return self.drop(matrix)
 
 
-# TODO: fix maybe?
 class nnLayerNorm(nn.Module, getsetpanel):
     def __init__(self, my_panel_maker):
         control_panel = my_panel_maker.control_panel
@@ -551,8 +550,7 @@ class nnCustom(nn.Module, getsetpanel):
     def set_user_data(self):
         deserializer = basicdeserial()
 
-        # FIX: dont use [1:]
-        for item in self.jsonlist[1:]:
+        for item in self.jsonlist:
             print(item)
             temp_item = deserializer.deserialize(item)
             self.itemlist.append(temp_item)
