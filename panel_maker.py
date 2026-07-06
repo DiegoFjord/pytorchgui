@@ -176,6 +176,31 @@ class panel_maker:
         tp = trilpanel(panel, label)
         return tp
 
+    def makedrop(self):
+        panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
+        drop = tk.IntVar(value=0)
+
+        label = tk.Label(panel, text="split menu")
+        spinbox = tk.Spinbox(
+            panel, from_=0, to=0.95, increment=0.05, textvariable=drop)
+
+        panel.add(label)
+        panel.add(spinbox)
+
+        dp = droppanel(panel, label, spinbox)
+        dp.drop = drop
+
+        return dp
+
+
+class droppanel:
+    def __init__(self, panel, label, spinbox):
+        self.panel = panel
+        self.label = label
+        self.spinbox = spinbox
+
+        self.drop = None
+
 
 class trilpanel:
     def __init__(self, panel, label):

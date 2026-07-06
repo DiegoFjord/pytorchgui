@@ -62,9 +62,9 @@ class winInit:
         # object options
         options1 = [
             "Linear", "Batch", "Embeddings",
-            "Multiply", "Script", "Split", "Line",
-            "Tril", "Dropout", "Terminate", "Dropout",
-            "LayerNorm", "Relu"
+            "Multiply", "Script", "Split",
+            "Tril", "Dropout", "Terminate",
+            "Dropout", "LayerNorm", "Relu"
         ]
         options2 = self.state["libs"]
         options3 = ["a", "b", "c"]
@@ -95,6 +95,9 @@ class winInit:
         self.mouse_button = ctk.CTkButton(
             master=button_frame, text="Drag", command=self.setmouse)
 
+        self.line_button = ctk.CTkButton(
+            master=button_frame, text="Line", command=self.make_Line)
+
         self.reset_button = ctk.CTkButton(
             master=button_frame, text="Reset", command=self.reset)
 
@@ -103,6 +106,7 @@ class winInit:
 
         button_conf(self.start_button)
         button_conf(self.mouse_button)
+        button_conf(self.line_button)
         button_conf(self.reset_button)
         button_conf(self.files_button)
 
@@ -149,8 +153,9 @@ class winInit:
 
         self.start_button.grid(row=0, column=0, padx=2, pady=2)
         self.mouse_button.grid(row=0, column=1, padx=2, pady=2)
-        self.reset_button.grid(row=0, column=2, padx=2, pady=2)
-        self.files_button.grid(row=0, column=3, padx=2, pady=2)
+        self.line_button.grid(row=0, column=2, padx=2, pady=2)
+        self.reset_button.grid(row=0, column=3, padx=2, pady=2)
+        self.files_button.grid(row=0, column=4, padx=2, pady=2)
 
         self.save_as_button.grid(row=0, column=0, padx=2, pady=2)
         self.save_entry.grid(row=0, column=1, padx=2, pady=2)
@@ -178,6 +183,9 @@ class winInit:
     def load(self):
         self.reset(self.load_entry.get())
 
+    def make_Line(self):
+        _ = self.my_nn_maker.make_nnItem("Line")
+
     def make_nnItem(self, out):
         selection = self.nn_combo.get()
         _ = self.my_nn_maker.make_nnItem(selection)
@@ -203,7 +211,7 @@ class winInit:
         selection = self.custom_combo.get()
         filename = selection
         #
-        with open(filename + ".json", "r", encoding="utf-8") as f:
+        with open("saves/" + filename + ".json", "r", encoding="utf-8") as f:
             text = f.read()
 
         jsondata = json.loads(text)

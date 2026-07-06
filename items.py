@@ -51,13 +51,13 @@ class nnStart(getsetpanel):
         pass
 
     def readfile(self):
-        # with open(self.filename, 'r', encoding="utf-8") as f:
-        # text = f.read()
+        with open(self.filename, 'r', encoding="utf-8") as f:
+            text = f.read()
 
-        text = """this is some, text 1 that is longer than the previous text
-           a b c d e f g h i j k l m n o p q r s t u v w x y z
-           a b c d e f g h i j k l m n o p q r s t u v w x y z
-        """
+        # text = """this is some, text 1 that is longer than the previous text
+        #    a b c d e f g h i j k l m n o p q r s t u v w x y z
+        #    a b c d e f g h i j k l m n o p q r s t u v w x y z
+        # """
         # NOTE: tokens
         tokens = re.findall(r"\w+|\s|[^\w\s]", text.lower())
 
@@ -173,7 +173,7 @@ class nnLinear(nn.Module, getsetpanel):
         self.setup = True
 
         # panel data
-        self.control_panel = my_panel_maker.control_panel
+
         self.nn_panel = my_panel_maker.makelin()
 
     def get_user_data(self):
@@ -211,7 +211,7 @@ class nnEmbedings(nn.Module, getsetpanel):
         self.setup = True
 
         # panel data
-        self.control_panel = my_panel_maker.control_panel
+
         self.nn_panel = my_panel_maker.makeembs()
 
     def get_user_data(self):
@@ -257,7 +257,7 @@ class nnMultiply(getsetpanel):
         self.setup = True
 
         # panel data
-        self.control_panel = my_panel_maker.control_panel
+
         self.nn_panel = my_panel_maker.makemult()
 
     def get_user_data(self):
@@ -307,7 +307,7 @@ class nnScript(getsetpanel):
         self.count = 0
 
         # panel data
-        self.control_panel = my_panel_maker.control_panel
+
         self.nn_panel = my_panel_maker.makescript(self.filesave)
 
     def filesave(self):
@@ -363,7 +363,7 @@ class nnRelu(nn.Module, getsetpanel):
         self.setup = False
 
         # panel data
-        self.control_panel = my_panel_maker.control_panel
+
         self.nn_panel = my_panel_maker.makelin()
 
     def get_user_data(self):
@@ -388,14 +388,13 @@ class nnDropout(nn.Module, getsetpanel):
         self.setup = True
 
         # panel data
-        self.control_panel = my_panel_maker.control_panel
-        self.nn_panel = my_panel_maker.makelin()
+        self.nn_panel = my_panel_maker.makedrop()
 
     def get_user_data(self):
-        self.dropval = self.nn_panel.spinvar.get()
+        self.dropval = self.nn_panel.drop.get()
 
     def set_user_data(self):
-        self.drop = nn.dropout(self.dropval).to(nnGlobals.device)
+        self.drop = nn.Dropout(self.dropval).to(nnGlobals.device)
 
     def run(self, matrix):
         print("running dropout")
@@ -418,7 +417,7 @@ class nnLayerNorm(nn.Module, getsetpanel):
         self.dim = None
 
         # panel data
-        self.control_panel = my_panel_maker.control_panel
+
         self.nn_panel = my_panel_maker.makelin()
 
     def get_user_data(self):
@@ -448,7 +447,7 @@ class nnSplit(getsetpanel):
         self.setup = True
 
         # panel data
-        self.control_panel = my_panel_maker.control_panel
+
         self.nn_panel = my_panel_maker.makesplit()
 
     def get_user_data(self):
@@ -540,7 +539,7 @@ class nnCustom(nn.Module, getsetpanel):
         self.nn_panel = my_panel_maker.maketril()
 
     def get_user_data(self):
-        with open(self.filename + ".json", 'r', encoding="utf-8") as f:
+        with open("saves/" + self.filename + ".json", 'r', encoding="utf-8") as f:
             text = f.read()
 
         json_items = json.loads(text)
@@ -588,7 +587,7 @@ class nnTerminate(getsetpanel):
         self.setup = True
 
         # panel data
-        self.control_panel = my_panel_maker.control_panel
+
         self.nn_panel = my_panel_maker.maketril()
 
     def get_user_data(self):

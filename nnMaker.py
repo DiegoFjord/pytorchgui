@@ -53,7 +53,7 @@ class basicMaker:
     def get_basic_item(self, selection):
         match selection:
             # set selection in the constructor
-            case "Relu": return basicStart(selection)
+            case "Start": return basicStart(selection)
             case "Relu": return basicLinear(selection)
             case "Multiply": return basicMultiply(selection)
             case "Split": return basicSplit(selection)
