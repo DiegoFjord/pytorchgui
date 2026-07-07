@@ -9,7 +9,7 @@ from winInit import winInit
 # root
 root = tk.Tk()
 root.title("title")
-root.geometry("1000x750")
+root.geometry("1200x800")
 
 
 def set_focus(e):

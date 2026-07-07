@@ -54,6 +54,7 @@ class nndeserial:
             case "Multiply":
                 panel.transposea.set(item_json["transposea"])
                 panel.transposeb.set(item_json["transposeb"])
+                panel.flip.set(item_json["flip"])
             case "Script":
                 panel.filename.set(item_json["filename"])
                 panel.prog.set(item_json["prog"])
@@ -81,7 +82,7 @@ class nnserial:
             case "Linear": retdict = {"width": item.width}
             case "Batch": retdict = {"split": item.split}
             case "Embeddings": retdict = {"embs": item.embs}
-            case "Multiply": retdict = {"transposea": item.transposea, "transposeb": item.transposeb}
+            case "Multiply": retdict = {"transposea": item.transposea, "transposeb": item.transposeb, "flip": item.flip}
             case "Script": retdict = {"filename": item.exec_file, "prog": item.prog}
             case "Dropout": retdict = {"dropout": item.dropval}
             case "Custom": retdict = {"filename": item.filename}

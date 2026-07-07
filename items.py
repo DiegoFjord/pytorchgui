@@ -1,9 +1,9 @@
 import re
-import torch.nn as nn
+import json
 import torch
 import torch_directml
-from basicItems import basicDropout, basicLayerNorm, basicLinear, basicMultiply, basicRelu, basicScript, basicSplit, basicTril
-import json
+import torch.nn as nn
+from torch.nn import functional as F
 from serial import basicdeserial
 
 
@@ -80,7 +80,7 @@ class nnStart(getsetpanel):
     def runExecute(self):
         if (self.execution == 1):
             print("\033[33mWarning:\033[0m" + " running test output on start")
-            return torch.rand(16, 8, 4).to(nnGlobals.device)
+            return torch.rand(4, 2, 4).to(nnGlobals.device)
         if (self.execution == 2):
             return self.readfile()
     # this input is a tensor
@@ -252,6 +252,7 @@ class nnMultiply(getsetpanel):
         self.transposeb = None
         self.a = None
         self.b = None
+        self.flip = None
         self.setup = True
 
         # panel data
@@ -261,12 +262,13 @@ class nnMultiply(getsetpanel):
     def get_user_data(self):
         self.transposea = self.nn_panel.transposea.get()
         self.transposeb = self.nn_panel.transposeb.get()
+        self.flip = self.nn_panel.flip.get()
 
     def set_user_data(self):
         pass
 
     def run(self, matrix):
-        print("running embs")
+        print("running mult")
         if (self.setup):
             self.get_user_data()
             self.set_user_data()
@@ -275,17 +277,24 @@ class nnMultiply(getsetpanel):
         if (self.a is not None):
             # run multiplication
             if (self.transposea):
-                self.a = self.a.transpose(-2, -1)
-            if (self.transposeb):
                 matrix = matrix.transpose(-2, -1)
+            if (self.transposeb):
+                self.a = self.a.transpose(-2, -1)
 
-            print(self.a.shape)
             print(matrix.shape)
-            if (self.a.size(-1) != matrix.size(-2)):
-                print("items not compatible")
-                matrix = None
+            print(self.a.shape)
+            if self.flip:
+                if (self.a.size(-1) != matrix.size(-2)):
+                    print("items not compatible")
+                    matrix = None
+                else:
+                    matrix = self.a @ matrix
             else:
-                matrix = matrix @ self.a
+                if (matrix.size(-1) != self.a.size(-2)):
+                    print("items not compatible")
+                    matrix = None
+                else:
+                    matrix = matrix @ self.a
 
             self.a = None
             return matrix
@@ -337,6 +346,7 @@ class nnScript(getsetpanel):
             'device': nnGlobals.device,
             'x': matrix,
             'y': nnGlobals.y,
+            'F': F,
             'count': self.count
         }
 
@@ -345,7 +355,7 @@ class nnScript(getsetpanel):
         exec(self.prog, exec_scope)
 
         # 3. Extract your new tensor 'c' from the environment dictionary
-        out = exec_scope['c']
+        out = exec_scope['out']
         print(out.shape)
         self.count += 1
         return out
@@ -537,7 +547,8 @@ class nnCustom(nn.Module, getsetpanel):
         self.nn_panel = my_panel_maker.maketril()
 
     def get_user_data(self):
-        with open("saves/" + self.filename + ".json", 'r', encoding="utf-8") as f:
+        filename = "saves/" + self.filename + ".json"
+        with open(filename, 'r', encoding="utf-8") as f:
             text = f.read()
 
         json_items = json.loads(text)

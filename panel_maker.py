@@ -108,22 +108,25 @@ class panel_maker:
 
         a = tk.IntVar(value=1)
         b = tk.IntVar(value=0)
+        flip = tk.IntVar(value=0)
 
         label = tk.Label(panel, text="multiplication menu")
         checkboxa = tk.Checkbutton(
-            panel, text="transposea", variable=a, onvalue=1, offvalue=0
-        )
+            panel, text="transposea", variable=a, onvalue=1, offvalue=0)
         checkboxb = tk.Checkbutton(
-            panel, text="transposeb", variable=b, onvalue=1, offvalue=0
-        )
+            panel, text="transposeb", variable=b, onvalue=1, offvalue=0)
+        checkboxb = tk.Checkbutton(
+            panel, text="flip", variable=flip, onvalue=1, offvalue=0)
 
         panel.add(label)
         panel.add(checkboxa)
         panel.add(checkboxb)
+        panel.add(flip)
 
         mp = multpanel(panel, label, checkboxa, checkboxb)
         mp.transposea = a
         mp.transposeb = b
+        mp.flip = flip
 
         return mp
 
@@ -241,6 +244,7 @@ class multpanel:
 
         self.transposea = None
         self.transposeb = None
+        self.flip = None
 
 
 class embpanel:
