@@ -25,6 +25,7 @@ class panel_maker:
         run = ctk.CTkRadioButton(panel, text="run", variable=ex, value=2)
         custom = ctk.CTkRadioButton(panel, text="custom", variable=ex, value=3)
         entry = tk.Entry(panel, textvariable=filename)
+        entry2 = tk.Entry(panel, textvariable=filename)
 
         radio_conf(test)
         radio_conf(run)
@@ -33,7 +34,7 @@ class panel_maker:
         panel.add(label)
         panel.add(test)
         panel.add(run)
-        panel.add(custom)
+        # panel.add(custom)
         panel.add(entry)
 
         sp = startpanel(panel, label, entry)
@@ -51,7 +52,7 @@ class panel_maker:
 
         panel.add(label)
         panel.add(spinbox)
-        panel.add(entry)
+        # panel.add(entry)
 
         lp = linpanel(panel, label, spinbox, entry)
         lp.width = width
@@ -78,7 +79,7 @@ class panel_maker:
         panel.add(spinboxb)
         panel.add(train)
         panel.add(validate)
-        panel.add(entry)
+        # panel.add(entry)
 
         bp = batchpanel(panel, label, spinboxa, spinboxb, entry)
         bp.batch = batch
@@ -96,7 +97,7 @@ class panel_maker:
 
         panel.add(label)
         panel.add(spinboxa)
-        panel.add(entry)
+        # panel.add(entry)
 
         bp = embpanel(panel, label, spinboxa)
         bp.embs = embs
@@ -139,8 +140,8 @@ class panel_maker:
         entryb = tk.Entry(panel, textvariable=prog)
 
         panel.add(label)
-        panel.add(button)
-        panel.add(entrya)
+        # panel.add(button)
+        # panel.add(entrya)
         panel.add(entryb)
 
         sp = scriptpanel(panel, label, button, entrya, entryb)
@@ -167,15 +168,6 @@ class panel_maker:
         sp.block = offset
         return sp
 
-    def maketril(self):
-        panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
-        label = tk.Label(panel, text="split menu")
-
-        panel.add(label)
-
-        tp = trilpanel(panel, label)
-        return tp
-
     def makedrop(self):
         panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
         drop = tk.IntVar(value=0)
@@ -192,6 +184,21 @@ class panel_maker:
 
         return dp
 
+    def makeempty(self, menuname):
+        panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
+        label = tk.Label(panel, text=f"{menuname} menu")
+
+        panel.add(label)
+
+        ep = emptypanel(panel, label)
+        return ep
+
+
+class emptypanel:
+    def __init__(self, panel, label):
+        self.panel = panel
+        self.label = label
+
 
 class droppanel:
     def __init__(self, panel, label, spinbox):
@@ -200,12 +207,6 @@ class droppanel:
         self.spinbox = spinbox
 
         self.drop = None
-
-
-class trilpanel:
-    def __init__(self, panel, label):
-        self.panel = panel
-        self.label = label
 
 
 class splitpanel:

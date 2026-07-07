@@ -53,6 +53,7 @@ class DragDropCanvas:
         tempItem.curr.hide_user_panel()
         prevlines = tempItem.line_nexts
         nextlines = tempItem.line_prevs
+
         for line in prevlines:
             self.canvas.delete(line)
         for line in nextlines:
@@ -61,9 +62,12 @@ class DragDropCanvas:
         if (self.last is not None):
             self.canvas.delete(self.last)
             self.my_designer.delete(self.last)
-            self.last = None
 
-        # self.controller.itemset.pop(self.last)
+        self.controller.remove_item(tempItem, self.last)
+
+        self.last = None
+        self.selected_id = None
+        self.base_id = None
 
     def set_control_panel(self, tempdict, clicked_id):
         if (self.last is not None):
@@ -78,7 +82,7 @@ class DragDropCanvas:
             e.x, e.y, e.x, e.y
         )
 
-        for clicked_id in clicked_ids:
+        for clicked_id in reversed(clicked_ids):
             if (clicked_id in tempdict):
                 self.start_x = e.x
                 self.start_y = e.y
@@ -89,13 +93,12 @@ class DragDropCanvas:
                     initial_points = [e.x, e.y, e.x, e.y, e.x, e.y, e.x, e.y]
 
                     item_id = self.canvas.create_line(
-                        initial_points, smooth=True, fill="blue", width=3.0
-                    )
+                        initial_points, smooth=True, fill="blue", width=3.0)
 
                     self.selected_id = item_id
 
                 else:
-                    self.selected_id = clicked_ids[0]
+                    self.selected_id = clicked_id
 
                 break
 
@@ -199,6 +202,7 @@ class DragDropCanvas:
                 self.canvas.delete(self.selected_id)
 
         # reset the selection
+        # TODO: maybe set last on release
         if self.selected_id:
             self.selected_id = None
         if self.base_id:

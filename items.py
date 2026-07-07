@@ -123,9 +123,9 @@ class nnBatch(getsetpanel):
 
     # used for self supervised learning
     # returns a (batch x block) tensor
-    def get_batch(self, train_data, val_data, split, batch_size, block_size):
+    def get_batch(self, split, batch_size, block_size):
         # generate a small batch of data of inputs x and targets y
-        data = train_data if split == 'train' else val_data
+        data = self.train_data if split == 'train' else self.val_data
         ix = torch.randint(len(data) - block_size, (batch_size,))
         x = torch.stack([data[i:i + block_size] for i in ix])
         y = torch.stack([data[i+1:i + block_size + 1] for i in ix])
@@ -153,9 +153,7 @@ class nnBatch(getsetpanel):
             self.setup = False
 
         x = self.get_batch(
-            matrix, matrix, self.split,
-            nnGlobals.batch_size, nnGlobals.block_size
-        )
+            self.split, nnGlobals.batch_size, nnGlobals.block_size)
 
         print(x.shape)
         return x
@@ -359,12 +357,12 @@ class nnRelu(nn.Module, getsetpanel):
         getsetpanel.__init__(self, control_panel)
         nn.Module.__init__(self)
 
-        self.relu = nn.Relu()
+        self.relu = nn.ReLU()
         self.setup = False
 
         # panel data
 
-        self.nn_panel = my_panel_maker.makelin()
+        self.nn_panel = my_panel_maker.makeempty("ReLU")
 
     def get_user_data(self):
         pass
@@ -418,7 +416,7 @@ class nnLayerNorm(nn.Module, getsetpanel):
 
         # panel data
 
-        self.nn_panel = my_panel_maker.makelin()
+        self.nn_panel = my_panel_maker.makeempty("LayerNorm")
 
     def get_user_data(self):
         pass
@@ -490,7 +488,7 @@ class nnTril(nn.Module, getsetpanel):
         self.setup = True
 
         # panel data
-        self.nn_panel = my_panel_maker.maketril()
+        self.nn_panel = my_panel_maker.makeempty("Tril")
 
     def get_user_data(self):
         pass
@@ -588,7 +586,7 @@ class nnTerminate(getsetpanel):
 
         # panel data
 
-        self.nn_panel = my_panel_maker.maketril()
+        self.nn_panel = my_panel_maker.makeempty("Terminate")
 
     def get_user_data(self):
         pass
@@ -600,5 +598,7 @@ class nnTerminate(getsetpanel):
         print("running terminate")
         if (self.setup):
             self.setup = False
+
+        print(matrix)
 
         return matrix

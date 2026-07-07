@@ -58,13 +58,14 @@ class nndeserial:
                 panel.filename.set(item_json["filename"])
                 panel.prog.set(item_json["prog"])
             case "Dropout":
-                panel.spinvar.set(item_json["dropout"])
+                panel.drop.set(item_json["dropout"])
             case "Split":
                 panel.fraction.set(item_json["fraction"])
                 panel.fraction.set(item_json["block"])
             case "Custom":
                 panel.filename = item_json["filename"]
-            case "Tril": pass
+            # LayerNorm, Relu, Terminate
+            case _: pass
         return my_nnItem
 
 
@@ -82,7 +83,7 @@ class nnserial:
             case "Embeddings": retdict = {"embs": item.embs}
             case "Multiply": retdict = {"transposea": item.transposea, "transposeb": item.transposeb}
             case "Script": retdict = {"filename": item.exec_file, "prog": item.prog}
-            case "Dropout": retdict = {"dropout": item.drop}
+            case "Dropout": retdict = {"dropout": item.dropval}
             case "Custom": retdict = {"filename": item.filename}
             case "Split": retdict = {"fraction": item.fraction, "block": item.block}
             case "Tril": retdict = {"type": my_nnItem.nntype}

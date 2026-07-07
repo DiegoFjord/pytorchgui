@@ -25,8 +25,8 @@ class nnMaker:
             case "Custom": return nnCustom(pm)
             case "Terminate": return nnTerminate(pm)
             case "Dropout": return nnDropout(pm)
-            case "Relu": return nnDropout(pm)
-            case "LayerNorm": return nnDropout(pm)
+            case "Relu": return nnRelu(pm)
+            case "LayerNorm": return nnLayerNorm(pm)
             case _: return None
 
     def make_nnItem(self, selection):

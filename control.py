@@ -39,29 +39,21 @@ class control:
         for item in self.itemlist:
             item.curr.get_user_data()
 
-    def remove_item(self, item: nnItem, line_id):
+    def remove_item(self, item: nnItem, item_id):
         for prev_item in item.prevs:
-            for next_item in prev_item.nexts:
-                if (next_item is item):
-                    prev_item.nexts.remove(item)
-                    break
+            prev_item.nexts.remove(item)
+            for line_next in prev_item.line_nexts:
+                for line_prev in item.line_prevs:
+                    if (line_next == line_prev):
+                        prev_item.line_nexts.remove(line_next)
+                        print("removing next line")
 
-        for next_item in item.next:
-            for prev_item in next_item.nexts:
-                if (prev_item is item):
-                    next_item.prevs.remove(item)
-                    break
+        for next_item in item.nexts:
+            next_item.prevs.remove(item)
+            for line_prev in next_item.line_prevs:
+                for line_next in item.line_nexts:
+                    if (line_prev == line_next):
+                        next_item.line_prevs.remove(line_prev)
+                        print("removing prev line")
 
-        for prev_item in item.line_prevs:
-            for next_item in prev_item.line_nexts:
-                if (next_item == line_id):
-                    prev_item.line_nexts.remove(line_id)
-                    break
-
-        for next_item in item.line_next:
-            for prev_item in next_item.line_nexts:
-                if (prev_item == line_id):
-                    next_item.line_prevs.remove(line_id)
-                    break
-
-        self.itemset.remove(item)
+        self.itemset.pop(item_id)
