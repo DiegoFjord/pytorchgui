@@ -115,13 +115,13 @@ class panel_maker:
             panel, text="transposea", variable=a, onvalue=1, offvalue=0)
         checkboxb = tk.Checkbutton(
             panel, text="transposeb", variable=b, onvalue=1, offvalue=0)
-        checkboxb = tk.Checkbutton(
+        checkboxc = tk.Checkbutton(
             panel, text="flip", variable=flip, onvalue=1, offvalue=0)
 
         panel.add(label)
         panel.add(checkboxa)
         panel.add(checkboxb)
-        panel.add(flip)
+        panel.add(checkboxc)
 
         mp = multpanel(panel, label, checkboxa, checkboxb)
         mp.transposea = a
