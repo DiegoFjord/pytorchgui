@@ -339,7 +339,9 @@ class nnScript(getsetpanel):
             self.fileget()
             self.get_user_data()
             self.set_user_data()
+            # TODO: make a clean function
             self.count = 1
+            self.inputs = []
             self.setup = False
 
         self.inputs.append(matrix)

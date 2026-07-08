@@ -57,3 +57,4 @@ class control:
                         print("removing prev line")
 
         self.itemset.pop(item_id)
+        self.itemlist.remove(item)
