@@ -65,7 +65,8 @@ class nndeserial:
                 panel.fraction.set(item_json["block"])
             case "Custom":
                 panel.filename = item_json["filename"]
-                panel.label.set(panel.filename)
+                my_nnItem.curr.filename = panel.filename
+                panel.label.config(text=panel.filename)
             # LayerNorm, Relu, Terminate
             case _: pass
         return my_nnItem

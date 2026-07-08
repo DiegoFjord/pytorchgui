@@ -187,7 +187,7 @@ class DragDropCanvas:
         clicked_ids = self.canvas.find_overlapping(
             event.x, event.y, event.x, event.y
         )
-        print(clicked_ids)
+        # print(clicked_ids)
 
         for item_id in clicked_ids:
             if (item_id in tempdict):

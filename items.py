@@ -81,7 +81,7 @@ class nnStart(getsetpanel):
     def runExecute(self):
         if (self.execution == 1):
             print("\033[33mWarning:\033[0m" + " running test output on start")
-            return torch.rand(4, 2, 4).to(nnGlobals.device)
+            return torch.rand(2, 8, 8).to(nnGlobals.device)
         if (self.execution == 2):
             return self.readfile()
     # this input is a tensor
@@ -339,6 +339,7 @@ class nnScript(getsetpanel):
             self.fileget()
             self.get_user_data()
             self.set_user_data()
+            self.count = 1
             self.setup = False
 
         self.inputs.append(matrix)
@@ -359,7 +360,9 @@ class nnScript(getsetpanel):
 
         # 3. Extract your new tensor 'c' from the environment dictionary
         out = exec_scope['x']
-        print(out.shape)
+        if (out is not None):
+            print(out.shape)
+
         self.count += 1
         return out
 
