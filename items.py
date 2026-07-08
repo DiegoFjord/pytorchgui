@@ -312,7 +312,8 @@ class nnScript(getsetpanel):
         self.exec_file = None
         self.prog = None
         self.setup = True
-        self.count = 0
+        self.count = 1
+        self.inputs = []
 
         # panel data
 
@@ -340,19 +341,20 @@ class nnScript(getsetpanel):
             self.set_user_data()
             self.setup = False
 
+        self.inputs.append(matrix)
+
         # locals are removed anyways
         # local_scope = {}
         exec_scope = {
             'torch': torch,
-            'device': nnGlobals.device,
             'x': matrix,
             'y': nnGlobals.y,
             'F': F,
+            'inputs': self.inputs,
             'count': self.count
         }
 
         # 2. Pass the dictionary into the globals parameter of exec()
-        # exec("c = x.sum(1, keepdim=False)", exec_scope)
         exec(self.prog, exec_scope)
 
         # 3. Extract your new tensor 'c' from the environment dictionary

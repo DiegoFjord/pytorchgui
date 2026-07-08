@@ -90,17 +90,21 @@ class basicMultiply():
 class basicScript():
     def __init__(self, typename):
         self.prog = None
-        self.count = 0
+        self.count = 1
+        self.inputs = []
 
         self. typename = typename
 
     def run(self, matrix):
         print("running script")
+        self.inputs.append(matrix)
 
         exec_scope = {
             'torch': torch,
             'x': matrix,
+            'y': nnGlobals.y,
             'F': F,
+            'inputs': self.inputs,
             'count': self.count
         }
 
