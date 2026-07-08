@@ -219,6 +219,7 @@ class winInit:
         if (self.checklibjson(jsondata)):
             custom = self.my_nn_maker.make_nnItem("Custom")
             custom.curr.filename = filename
+            custom.curr.nn_panel.label.config(text=filename)
             print("custom filename: ", custom.curr.filename)
         else:
             print("not valid input")

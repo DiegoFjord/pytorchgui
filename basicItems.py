@@ -1,5 +1,7 @@
 import torch.nn as nn
 import torch
+from torch.nn import functional as F
+from items import nnGlobals
 
 
 class basicStart(nn.Module):
@@ -14,7 +16,7 @@ class basicLinear(nn.Module):
     def __init__(self, typename):
         nn.Module.__init__(self)
 
-        self.device = None
+        self.device = nnGlobals.device
 
         self.lin1 = None
 
@@ -46,29 +48,37 @@ class basicMultiply():
         self.transposeb = None
         self.a = None
         self.b = None
+        self.flip = False
 
         self. typename = typename
         self.setup = True
 
     def run(self, matrix):
-        print("running embs")
+        print("running mult")
         if (self.setup):
             self.setup = False
 
         if (self.a is not None):
             # run multiplication
             if (self.transposea):
-                self.a = self.a.transpose(-2, -1)
-            if (self.transposeb):
                 matrix = matrix.transpose(-2, -1)
+            if (self.transposeb):
+                self.a = self.a.transpose(-2, -1)
 
-            print(self.a.shape)
             print(matrix.shape)
-            if (self.a.size(-1) != matrix.size(-2)):
-                print("items not compatible")
-                matrix = None
+            print(self.a.shape)
+            if self.flip:
+                if (self.a.size(-1) != matrix.size(-2)):
+                    print("items not compatible")
+                    matrix = None
+                else:
+                    matrix = self.a @ matrix
             else:
-                matrix = matrix @ self.a
+                if (matrix.size(-1) != self.a.size(-2)):
+                    print("items not compatible")
+                    matrix = None
+                else:
+                    matrix = matrix @ self.a
 
             self.a = None
             return matrix
@@ -90,18 +100,22 @@ class basicScript():
         exec_scope = {
             'torch': torch,
             'x': matrix,
+            'F': F,
             'count': self.count
         }
 
         # 2. Pass the dictionary into the globals parameter of exec()
         # exec("c = x.sum(1, keepdim=False)", exec_scope)
+        print("RUNNING PROGRAM ################")
+        print(self.prog)
         exec(self.prog, exec_scope)
+        print("################################")
 
         # 3. Extract your new tensor 'c' from the environment dictionary
-        c = exec_scope['c']
-        print(c.shape)
+        out = exec_scope['x']
+        print(out.shape)
         self.count += 1
-        return c
+        return out
 
 
 class basicSplit():
@@ -147,7 +161,7 @@ class basicRelu(nn.Module):
 class basicDropout(nn.Module):
     def __init__(self, typename):
         nn.Module.__init__(self)
-        self.device = None
+        self.device = nnGlobals.device
 
         self.drop = None
         self.dropval = None
@@ -156,10 +170,11 @@ class basicDropout(nn.Module):
         self.setup = True
 
     def set_user_data(self):
-        self.drop = nn.dropout(self.dropval).to(self.device)
+        print(self.dropval)
+        self.drop = nn.Dropout(self.dropval).to(self.device)
 
     def run(self, matrix):
-        print("running relu")
+        print("running dropout")
         if (self.setup):
             self.set_user_data()
             self.setup = False
@@ -170,7 +185,7 @@ class basicDropout(nn.Module):
 class basicLayerNorm(nn.Module):
     def __init__(self, typename):
         nn.Module.__init__(self)
-        self.device = None
+        self.device = nnGlobals.device
 
         self.lay = None
 
@@ -183,7 +198,7 @@ class basicLayerNorm(nn.Module):
         self.lay = nn.LayerNorm(self.dim).to(self.device)
 
     def run(self, matrix):
-        print("running relu")
+        print("running layernorm")
         if (self.setup):
             self.dim = matrix.size(-1)
 
@@ -196,7 +211,7 @@ class basicLayerNorm(nn.Module):
 class basicTril(nn.Module):
     def __init__(self, typename):
         nn.Module.__init__(self)
-        self.device = None
+        self.device = nnGlobals.device
 
         # self.tril = None # do not uncomment
         self.dima = None
@@ -207,24 +222,24 @@ class basicTril(nn.Module):
         self.setup = True
 
     def set_user_data(self):
+        device = nnGlobals.device
         ones = torch.ones(self.dima, self.dimb)
-        self.register_buffer(
-            'tril', torch.tril(ones).to(self.device)
-        ).to(self.device)
+        ones.to(device)
+        self.register_buffer('tril', torch.tril(ones).to(device))
 
     def run(self, matrix):
         print("running tril")
         if (self.setup):
             self.dima = matrix.size(-2)
             self.dimb = matrix.size(-1)
-
             self.set_user_data()
             self.setup = False
 
+        print(matrix.shape)
         data = matrix.masked_fill(
             self.tril[:self.dima, :self.dimb] == 0, float('-inf')
         )
-        print(data)
+
         return data
 
 

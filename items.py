@@ -14,6 +14,7 @@ class nnGlobals:
     batch_size = None
     emb_dims = None
     y = None
+    script_data = {}
     device = torch_directml.device()
 
 
@@ -24,7 +25,7 @@ class getsetpanel:
         self.nn_panel = None
 
     def get_user_panel(self):
-        self.nn_panel.panel.pack()
+        self.nn_panel.panel.pack(fill="x")
 
     def hide_user_panel(self):
         self.nn_panel.panel.pack_forget()
@@ -355,7 +356,7 @@ class nnScript(getsetpanel):
         exec(self.prog, exec_scope)
 
         # 3. Extract your new tensor 'c' from the environment dictionary
-        out = exec_scope['out']
+        out = exec_scope['x']
         print(out.shape)
         self.count += 1
         return out
@@ -506,7 +507,7 @@ class nnTril(nn.Module, getsetpanel):
     def set_user_data(self):
         device = nnGlobals.device
         ones = torch.ones(self.dima, self.dimb)
-        ones.to(nnGlobals.device)
+        ones.to(device)
         self.register_buffer('tril', torch.tril(ones).to(device))
 
     def run(self, matrix):
@@ -544,7 +545,7 @@ class nnCustom(nn.Module, getsetpanel):
         self.setup = True
 
         # panel data
-        self.nn_panel = my_panel_maker.maketril()
+        self.nn_panel = my_panel_maker.makeempty("")
 
     def get_user_data(self):
         filename = "saves/" + self.filename + ".json"
@@ -571,6 +572,8 @@ class nnCustom(nn.Module, getsetpanel):
             return
 
         out = curr.run(prev)
+        if (out is None):
+            return
         # grab next indeces and call them with out
         for next_ind in self.followdict[str(index)]:
             self.callnexts(out, next_ind, itemlist)

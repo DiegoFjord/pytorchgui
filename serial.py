@@ -23,7 +23,7 @@ class basicdeserial:
                 my_basicItem.filename = item_json["filename"]
                 my_basicItem.prog = item_json["prog"]
             case "Dropout":
-                my_basicItem.spinvar = item_json["dropout"]
+                my_basicItem.dropval = item_json["dropout"]
             case "Split":
                 my_basicItem.fraction = item_json["fraction"]
                 my_basicItem.fraction = item_json["block"]
@@ -65,6 +65,7 @@ class nndeserial:
                 panel.fraction.set(item_json["block"])
             case "Custom":
                 panel.filename = item_json["filename"]
+                panel.label.set(panel.filename)
             # LayerNorm, Relu, Terminate
             case _: pass
         return my_nnItem
