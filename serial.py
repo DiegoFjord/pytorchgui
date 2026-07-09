@@ -6,7 +6,7 @@ class basicdeserial:
     def deserialize(self, item_json):
         from nnMaker import basicMaker
         my_basic_maker = basicMaker()
-        print("running deserialize")
+        print("running basic deserialize")
         my_basicItem = my_basic_maker.get_basic_item(
             item_json["type"]
         )
@@ -27,8 +27,13 @@ class basicdeserial:
             case "Split":
                 my_basicItem.fraction = item_json["fraction"]
                 my_basicItem.fraction = item_json["block"]
+            case "Custom":
+                my_basicItem.filename = item_json["filename"]
+                print(my_basicItem.filename)
             case "Tril": pass
-            case _: print("SERIAL Unexpected", my_basicItem.typename)
+            case "Relu": pass
+            case "Terminate": pass
+            case _: print("\033[33mNo basic deserial:\033[0m", my_basicItem.typename)
         return my_basicItem
 
 
@@ -68,7 +73,7 @@ class nndeserial:
                 my_nnItem.curr.filename = panel.filename
                 panel.label.config(text=panel.filename)
             # LayerNorm, Relu, Terminate
-            case _: pass
+            case _: print("\033[33mNo deserial:\033[0m", my_nnItem.nntype)
         return my_nnItem
 
 
@@ -90,6 +95,7 @@ class nnserial:
             case "Custom": retdict = {"filename": item.filename}
             case "Split": retdict = {"fraction": item.fraction, "block": item.block}
             case "Tril": retdict = {"type": my_nnItem.nntype}
+            case _: print("\033[33mNo Serial:\033[0m", my_nnItem.nntype)
 
         retdict["type"] = my_nnItem.nntype
         return retdict

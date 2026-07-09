@@ -1,6 +1,6 @@
 from control import nnItem
 from items import nnStart, nnGlobals, nnLinear, nnBatch, nnEmbedings, nnMultiply, nnScript, nnSplit, nnTril, nnCustom, nnTerminate, nnDropout, nnRelu, nnLayerNorm
-from basicItems import basicLinear, basicMultiply, basicScript, basicSplit, basicTril, basicDropout, basicTerminate, basicStart
+from basicItems import basicLinear, basicMultiply, basicScript, basicSplit, basicTril, basicDropout, basicTerminate, basicStart, basicCustom, basicRelu
 # this is a comment
 # TODO: make this its own file/class
 
@@ -51,10 +51,11 @@ class nnMaker:
 
 class basicMaker:
     def get_basic_item(self, selection):
+        print(f"making basic{selection}")
         match selection:
             # set selection in the constructor
             case "Start": return basicStart(selection)
-            case "Relu": return basicLinear(selection)
+            case "Relu": return basicRelu(selection)
             case "Multiply": return basicMultiply(selection)
             case "Split": return basicSplit(selection)
             case "Script": return basicScript(selection)
@@ -63,4 +64,5 @@ class basicMaker:
             case "Linear": return basicLinear(selection)
             case "Dropout": return basicDropout(selection)
             case "Terminate": return basicTerminate(selection)
+            case "Custom": return basicCustom(selection)
             case _: return None

@@ -187,6 +187,27 @@ class panel_maker:
 
         return dp
 
+    def maketerminate(self):
+        panel = tk.PanedWindow(
+            self.control_panel, orient=tk.HORIZONTAL, background="#2c2c2c")
+        ex = tk.IntVar(value=1)
+
+        label = tk.Label(panel, text="terminate menu")
+        matrix = ctk.CTkRadioButton(panel, text="matix", variable=ex, value=1)
+        shape = ctk.CTkRadioButton(panel, text="shape", variable=ex, value=2)
+
+        radio_conf(matrix)
+        radio_conf(shape)
+
+        panel.add(label)
+        panel.add(matrix)
+        panel.add(shape)
+
+        tp = terminatepanel(panel, label)
+        tp.output = ex
+
+        return tp
+
     def makeempty(self, menuname):
         panel = tk.PanedWindow(self.control_panel, orient=tk.HORIZONTAL)
         label = tk.Label(panel, text=f"{menuname} menu")
@@ -201,6 +222,14 @@ class emptypanel:
     def __init__(self, panel, label):
         self.panel = panel
         self.label = label
+
+
+class terminatepanel:
+    def __init__(self, panel, label):
+        self.panel = panel
+        self.label = label
+
+        self.output = None
 
 
 class droppanel:

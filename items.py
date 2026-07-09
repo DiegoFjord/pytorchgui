@@ -81,7 +81,7 @@ class nnStart(getsetpanel):
     def runExecute(self):
         if (self.execution == 1):
             print("\033[33mWarning:\033[0m" + " running test output on start")
-            return torch.rand(2, 8, 8).to(nnGlobals.device)
+            return torch.rand(2, 4, 16).to(nnGlobals.device)
         if (self.execution == 2):
             return self.readfile()
     # this input is a tensor
@@ -316,7 +316,6 @@ class nnScript(getsetpanel):
         self.inputs = []
 
         # panel data
-
         self.nn_panel = my_panel_maker.makescript(self.filesave)
 
     def filesave(self):
@@ -575,6 +574,7 @@ class nnCustom(nn.Module, getsetpanel):
     def callnexts(self, prev, index, itemlist):
         curr = itemlist[index]
         if (curr.typename == "Terminate"):
+            print("finised lib")
             self.output = prev
             return
 
@@ -604,13 +604,14 @@ class nnTerminate(getsetpanel):
         getsetpanel.__init__(self, control_panel)
 
         self.setup = True
+        self.output = None
 
         # panel data
 
-        self.nn_panel = my_panel_maker.makeempty("Terminate")
+        self.nn_panel = my_panel_maker.maketerminate()
 
     def get_user_data(self):
-        pass
+        self.output = self.nn_panel.output.get()
 
     def set_user_data(self):
         pass
@@ -618,8 +619,17 @@ class nnTerminate(getsetpanel):
     def run(self, matrix):
         print("running terminate")
         if (self.setup):
+            self.get_user_data()
+            self.set_user_data()
             self.setup = False
 
-        print(matrix)
+        if (self.setup):
+            self.setup = False
+
+        if (self.output == 1):
+            print(matrix)
+
+        if (self.output == 2):
+            print(matrix.shape)
 
         return matrix

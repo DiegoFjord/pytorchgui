@@ -1,7 +1,9 @@
 import torch.nn as nn
 import torch
+import json
 from torch.nn import functional as F
 from items import nnGlobals
+from serial import basicdeserial
 
 
 class basicStart(nn.Module):
@@ -110,14 +112,14 @@ class basicScript():
 
         # 2. Pass the dictionary into the globals parameter of exec()
         # exec("c = x.sum(1, keepdim=False)", exec_scope)
-        print("RUNNING PROGRAM ################")
-        print(self.prog)
+        # 2. Pass the dictionary into the globals parameter of exec()
         exec(self.prog, exec_scope)
-        print("################################")
 
         # 3. Extract your new tensor 'c' from the environment dictionary
         out = exec_scope['x']
-        print(out.shape)
+        if (out is not None):
+            print(out.shape)
+
         self.count += 1
         return out
 
@@ -153,7 +155,7 @@ class basicSplit():
 class basicRelu(nn.Module):
     def __init__(self, typename):
         nn.Module.__init__(self)
-        self.relu = nn.Relu()
+        self.relu = nn.ReLU()
 
         self. typename = typename
 
@@ -174,7 +176,6 @@ class basicDropout(nn.Module):
         self.setup = True
 
     def set_user_data(self):
-        print(self.dropval)
         self.drop = nn.Dropout(self.dropval).to(self.device)
 
     def run(self, matrix):
@@ -245,6 +246,65 @@ class basicTril(nn.Module):
         )
 
         return data
+
+
+class basicCustom(nn.Module):
+    def __init__(self, typename):
+        nn.Module.__init__(self)
+
+        self.filename = None
+        self.a = None
+        self.jsonlist = None
+        self.followdict = None
+        self.itemlist = []
+        self.followdict = None
+        self.output = None
+
+        self.typename = typename
+        self.setup = True
+
+    def get_user_data(self):
+        filename = "saves/" + self.filename + ".json"
+        with open(filename, 'r', encoding="utf-8") as f:
+            text = f.read()
+
+        json_items = json.loads(text)
+        self.jsonlist = json_items["itemlist"]
+        self.followdict = json_items["followdict"]
+
+    def set_user_data(self):
+        deserializer = basicdeserial()
+
+        for item in self.jsonlist:
+            print(item)
+            temp_item = deserializer.deserialize(item)
+            self.itemlist.append(temp_item)
+            print(temp_item.typename)
+
+    def callnexts(self, prev, index, itemlist):
+        curr = itemlist[index]
+        if (curr.typename == "Terminate"):
+            self.output = prev
+            return
+
+        out = curr.run(prev)
+        if (out is None):
+            return
+        # grab next indeces and call them with out
+        for next_ind in self.followdict[str(index)]:
+            self.callnexts(out, next_ind, itemlist)
+
+    def run(self, matrix):
+        print("running custom")
+        if (self.setup):
+            self.get_user_data()
+            self.set_user_data()
+            self.setup = False
+
+        self.callnexts(matrix, 0, self.itemlist)
+        print(self.output.shape)
+
+        return self.output
 
 
 class basicTerminate:
