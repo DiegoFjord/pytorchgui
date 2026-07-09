@@ -85,7 +85,7 @@ class nnserial:
         item = my_nnItem.curr
         retdict = {}
         match my_nnItem.nntype:
-            case "Start": retdict = {"filename": item.filename}
+            case "Start": retdict = {"filename": item.filename, "execution": item.execution}
             case "Linear": retdict = {"width": item.width}
             case "Batch": retdict = {"split": item.split}
             case "Embeddings": retdict = {"embs": item.embs}

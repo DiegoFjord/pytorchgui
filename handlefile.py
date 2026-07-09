@@ -30,6 +30,9 @@ class handlefile:
         jsonlist = json_items["itemlist"]
 
         itemlist.append(self.controller.treeStart)
+        panel = self.controller.treeStart.curr.nn_panel
+        panel.filename.set(jsonlist[0]["filename"])
+        panel.execute.set(jsonlist[0]["execution"])
         for item in jsonlist[1:]:
             temp_item = deserializer.deserialize(item)
             itemlist.append(temp_item)

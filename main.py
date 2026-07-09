@@ -8,8 +8,11 @@ from winInit import winInit
 
 # root
 root = tk.Tk()
-root.title("title")
+root.title("torchui")
 root.geometry("1200x800")
+
+app_icon = tk.PhotoImage(file='favicon.png')
+root.iconphoto(False, app_icon)
 
 
 def set_focus(e):

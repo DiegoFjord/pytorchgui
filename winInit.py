@@ -69,7 +69,7 @@ class winInit:
         options2 = self.state["libs"]
         options3 = ["a", "b", "c"]
         # create objects
-        appLabel = tk.Label(framea, text="PytorchGui")
+        appLabel = tk.Label(framea, text="torchui")
         appLabel.pack()
 
         # combo boxes
