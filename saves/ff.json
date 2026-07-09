@@ -1,0 +1,1 @@
+{"globalsdict": {"batch_size": null, "block_size": null}, "itemlist": [{"filename": "","execution": 1, "type": "Start"}, {"width": 8, "type": "Linear"}, {"type": "Relu"}, {"width": 16, "type": "Linear"}, {"dropout": 0, "type": "Dropout"}, {"type": "Terminate"}], "followdict": {"0": [1], "1": [2], "2": [3], "3": [4], "4": [5], "5": []}}
