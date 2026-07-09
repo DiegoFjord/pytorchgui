@@ -1,10 +1,15 @@
 import re
 import json
 import torch
-import torch_directml
 import torch.nn as nn
 from torch.nn import functional as F
 from serial import basicdeserial
+
+try:
+    import torch_directml
+    HAS_DIRECTML = True
+except ImportError:
+    HAS_DIRECTML = False
 
 
 # global vars
@@ -15,7 +20,13 @@ class nnGlobals:
     emb_dims = None
     y = None
     script_data = {}
-    device = torch_directml.device()
+    device = None
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+    elif HAS_DIRECTML:
+        device = torch_directml.device()
+    else:
+        device = torch.device("cpu")
 
 
 class getsetpanel:
