@@ -40,14 +40,17 @@ class handlefile:
         # follows
         followdict = json_items["followdict"]
         print(followdict)
+
+        canvas = self.my_nn_maker.ddCanvas
+        for index, listitem in enumerate(itemlist):
+            canvas.move_by_item(listitem, index * 110, 0)
         for index, listitem in enumerate(itemlist):
             for nn_index in followdict[str(index)]:
-                listitem.nexts.append(itemlist[nn_index])
-                itemlist[nn_index].prevs.append(listitem)
-
-                line_id = self.my_nn_maker.ddCanvas.get_line()
-                listitem.line_nexts.append(line_id)
-                itemlist[nn_index].line_prevs.append(line_id)
+                line_id = canvas.get_line()
+                canvas.attach_line(
+                    listitem,
+                    itemlist[nn_index],
+                    line_id)
 
     def save(self):
         jsondata = self.getjson()

@@ -34,6 +34,7 @@ class DragDropCanvas:
         # Create a draggable rectangle
         item_id = self.my_designer.getbystring(bind.nntype)
         self.controller.itemset[item_id] = bind
+        self.item_dict[bind] = item_id
         self.set_control_panel(self.controller.itemset, item_id)
 
     def get_line_coors(self, x0, y0, x1, y1):
@@ -113,6 +114,10 @@ class DragDropCanvas:
                 curr_coords[7] + d)
         )
 
+    def move_by_item(self, item, dx, dy):
+        self.canvas.move(self.item_dict[item], dx, dy)
+        self.my_designer.move(self.item_dict[item], dx, dy)
+
     def on_drag(self, event):
         """Drags the selected item."""
         if self.selected_id:
@@ -168,16 +173,33 @@ class DragDropCanvas:
         initial_points = [100, 50, 50, 50, 50, 50, 0, 50]
         return self.canvas.create_line(initial_points, smooth=True, fill="blue", width=3.0)
 
-    def attach_line(self, base_id,  target_id, selected_id,):
+    def attach_line(self, base,  target, line_id):
         # line segment attaching to next and previous
 
         tempdict = self.controller.itemset
-        tempdict[base_id].line_nexts.append(selected_id)
-        tempdict[target_id].line_prevs.append(selected_id)
+        base.line_nexts.append(line_id)
+        target.line_prevs.append(line_id)
 
         # logical next and previous
-        tempdict[base_id].nexts.append(tempdict[target_id])
-        tempdict[target_id].prevs.append(tempdict[base_id])
+        base.nexts.append(target)
+        target.prevs.append(base)
+
+        canvas = self.canvas
+        b = canvas.coords(self.item_dict[base])
+        t = canvas.coords(self.item_dict[target])
+        canvas.coords(
+            line_id,
+            *self.get_line_coors(
+                (b[0] + 100),
+                (b[1] + 50),
+                (t[0]),
+                (t[1] + 50),
+            )
+        )
+
+    def attach_line_by_id(self, base_id, target_id, selected_id):
+        tempdict = self.controller.itemset
+        self.attach_line(tempdict[base_id], tempdict[target_id], selected_id)
 
     def on_release(self, event):
         """Detects when the mouse button is released."""
@@ -195,7 +217,7 @@ class DragDropCanvas:
 
         if (self.state == "Line" and self.base_id):
             if (self.line_target_conditions(tempdict, target_id)):
-                self.attach_line(
+                self.attach_line_by_id(
                     self.base_id, target_id, self.selected_id
                 )
             else:
