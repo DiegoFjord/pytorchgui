@@ -64,7 +64,7 @@ class winInit:
             "Linear", "Batch", "Embeddings",
             "Multiply", "Script", "Split",
             "Tril", "Dropout", "Terminate",
-            "Dropout", "LayerNorm", "Relu"
+            "LayerNorm", "Relu"
         ]
         options2 = self.state["libs"]
         options3 = ["a", "b", "c"]

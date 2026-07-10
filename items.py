@@ -204,6 +204,9 @@ class nnLinear(nn.Module, getsetpanel):
             self.set_user_data()
             self.setup = False
 
+        if not torch.is_floating_point(matrix):
+            matrix = matrix.to(torch.float32)
+
         data = self.lin1(matrix)
         print("printing linear", data.shape)
         return data

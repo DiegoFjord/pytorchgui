@@ -22,7 +22,7 @@ class panel_maker:
 
         label = tk.Label(panel, text="start menu")
         test = ctk.CTkRadioButton(panel, text="test", variable=ex, value=1)
-        run = ctk.CTkRadioButton(panel, text="run", variable=ex, value=2)
+        run = ctk.CTkRadioButton(panel, text="data", variable=ex, value=2)
         custom = ctk.CTkRadioButton(panel, text="custom", variable=ex, value=3)
         entry = tk.Entry(panel, textvariable=filename)
         entry2 = tk.Entry(panel, textvariable=filename)
