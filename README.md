@@ -71,4 +71,5 @@ every component comes with a panel and tunable parameters
 ###
 \*Batch operates on data from start file\
 \*\*Embedding operates on batch output\
+<p style="color: yellow;" align="right">certified slop free 🍅</p>
 
