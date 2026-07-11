@@ -34,6 +34,7 @@ this is is an educational app to help you visualize the components used in a neu
 - **Reset:** clears the active project
 
 ## Quick start
+in the main directory run **python main.py** <sub>(may require python 3.10) </sub>\
 To run a basic implementation of a transformer in torchui select *File > load file:"gpt" > Run*\
 alternatively run any Library by connecting to Start and Run\
 any library can be opened as a regular project to view components
