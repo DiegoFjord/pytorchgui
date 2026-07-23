@@ -3,10 +3,6 @@ from designer import designer
 from ctypes import windll
 windll.shcore.SetProcessDpiAwareness(1)
 
-
-# TODO: label id items ass nn_xxx_id
-
-
 class DragDropCanvas:
     def __init__(self, canvas, controller):
         # breakpoint()

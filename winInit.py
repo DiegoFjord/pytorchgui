@@ -4,7 +4,7 @@ import json
 # my imports
 from canvas import DragDropCanvas
 from control import control
-from tkinter import ttk  # ttk is the modern tk
+from tkinter import ttk
 from panel_maker import panel_maker
 from handlefile import handlefile
 from nnMaker import nnMaker
